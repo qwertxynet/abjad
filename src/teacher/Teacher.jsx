@@ -1,0 +1,236 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { checkCode, checkPassword, makeUnlock, useAudioSet, useAr } from '../lib.js';
+import { LESSON_ORDER } from '../data/weeks.js';
+import { CLIPS } from './clips.js';
+import { CodeBox } from '../components/Quiz.jsx';
+import { encodeWav, makeZip, idb } from './audio-tools.js';
+
+export default function Teacher({ tab }) {
+  const [ok, setOk] = useState(false);
+  const [pw, setPw] = useState('');
+  const [err, setErr] = useState(false);
+  if (!ok)
+    return (
+      <div className="narrow panel">
+        <h1>Teacher pages</h1>
+        <form
+          className="row"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const good = await checkPassword(pw);
+            setOk(good);
+            setErr(!good);
+          }}
+        >
+          <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password" aria-label="Teacher password" autoFocus />
+          <button className="btn">Enter</button>
+        </form>
+        {err && <p className="verdict wrong">Wrong password.</p>}
+      </div>
+    );
+  const T = [
+    ['check', 'Check a code'],
+    ['unlock', 'Unlock code'],
+    ['studio', 'Recording studio'],
+  ];
+  const cur = T.find((t) => t[0] === tab) ? tab : 'check';
+  return (
+    <div>
+      <h1>Teacher pages</h1>
+      <div className="tabs wide">
+        {T.map(([id, label]) => (
+          <a key={id} className={'tab' + (id === cur ? ' on' : '')} href={'#/teacher/' + id}>
+            {label}
+          </a>
+        ))}
+      </div>
+      {cur === 'check' && <Check />}
+      {cur === 'unlock' && <Unlock />}
+      {cur === 'studio' && <Studio />}
+    </div>
+  );
+}
+
+function Check() {
+  const [name, setName] = useState('');
+  const [codes, setCodes] = useState('');
+  const rows = useMemo(
+    () =>
+      codes
+        .split(/[\s,;]+/)
+        .filter(Boolean)
+        .map((c) => checkCode(name, c)),
+    [name, codes]
+  );
+  return (
+    <section className="panel">
+      <p>Type the student’s name as in Canvas, then paste one or more of their codes.</p>
+      <div className="col-form">
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Student first and last name" aria-label="Student name" />
+        <textarea value={codes} onChange={(e) => setCodes(e.target.value)} rows={3} placeholder="W03-90-0220-XXXXXX" aria-label="Codes" />
+      </div>
+      {rows.length > 0 && (
+        <table className="tbl">
+          <thead>
+            <tr><th>Code</th><th>Valid for this name?</th><th>Week</th><th>Score</th><th>Date</th></tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i} className={r.ok ? 'ok' : 'bad'}>
+                <td className="mono">{r.code}</td>
+                <td>{r.ok ? '✓ yes' : r.kind === 'invalid' ? '✗ not a code' : '✗ no'}</td>
+                <td>{r.kind === 'lesson' ? r.week : r.kind === 'unlock' ? `unlock ≤ ${r.upTo}` : ''}</td>
+                <td>{r.kind === 'lesson' ? r.score + '%' : ''}</td>
+                <td>{r.kind === 'lesson' ? `${r.month}/${r.day}` : ''}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      <p className="hint">The score is the best one the student chose to submit; they can retake quizzes as often as they like.</p>
+    </section>
+  );
+}
+
+function Unlock() {
+  const [name, setName] = useState('');
+  const [upTo, setUpTo] = useState(LESSON_ORDER[1]);
+  return (
+    <section className="panel">
+      <p>Give a student a code that opens every week up to the one you choose, for example after an absence or on a new device.</p>
+      <div className="row">
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Student first and last name" aria-label="Student name" />
+        <select value={upTo} onChange={(e) => setUpTo(+e.target.value)} aria-label="Unlock up to">
+          {LESSON_ORDER.slice(1).map((n) => (
+            <option key={n} value={n}>
+              Up to Week {n}
+            </option>
+          ))}
+        </select>
+      </div>
+      {name.trim() && <CodeBox code={makeUnlock(name, upTo)} />}
+    </section>
+  );
+}
+
+// ───────────── Recording studio ─────────────
+function Studio() {
+  const published = useAudioSet();
+  const [takes, setTakes] = useState({}); // id → Blob (wav), kept in IndexedDB between visits
+  const [rec, setRec] = useState(null); // id being recorded
+  const [group, setGroup] = useState(CLIPS[0].group);
+  const [filter, setFilter] = useState('todo');
+  const media = useRef(null);
+  const ar = useAr();
+
+  useEffect(() => {
+    idb.all().then((all) => setTakes(all));
+  }, []);
+
+  const start = async (id) => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      const mr = new MediaRecorder(stream);
+      const chunks = [];
+      mr.ondataavailable = (e) => chunks.push(e.data);
+      mr.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const wav = await encodeWav(new Blob(chunks, { type: mr.mimeType }));
+        await idb.put(id, wav);
+        setTakes((t) => ({ ...t, [id]: wav }));
+        setRec(null);
+      };
+      mr.start();
+      media.current = mr;
+      setRec(id);
+    } catch {
+      alert('The microphone is not available. Allow microphone access for this page and try again.');
+    }
+  };
+  const stop = () => media.current?.stop();
+  const playTake = (id) => new Audio(URL.createObjectURL(takes[id])).play();
+  const download = (id) => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(takes[id]);
+    a.download = id + '.wav';
+    a.click();
+  };
+  const downloadAll = async () => {
+    const files = await Promise.all(Object.entries(takes).map(async ([id, b]) => ({ name: id + '.wav', data: new Uint8Array(await b.arrayBuffer()) })));
+    const zip = makeZip(files);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([zip], { type: 'application/zip' }));
+    a.download = 'abjad-recordings.zip';
+    a.click();
+  };
+  const forget = async (id) => {
+    await idb.del(id);
+    setTakes((t) => {
+      const c = { ...t };
+      delete c[id];
+      return c;
+    });
+  };
+
+  const groups = [...new Set(CLIPS.map((c) => c.group))];
+  const list = CLIPS.filter((c) => c.group === group).filter((c) => (filter === 'all' ? true : filter === 'todo' ? !takes[c.id] && !published.has(c.id) : !!takes[c.id]));
+  const total = CLIPS.length;
+  const doneN = CLIPS.filter((c) => takes[c.id] || published.has(c.id)).length;
+
+  return (
+    <section className="panel studio">
+      <p>
+        Record each clip, check it, and re-record if needed. Takes stay in this browser until you download them. When you are ready, press{' '}
+        <b>Download all</b>, unzip the files into <code>abjad/source/audio/</code>, and run <code>npm run audio</code>. The sound then switches on
+        in the app for every clip you recorded.
+      </p>
+      <p>
+        <b>
+          {doneN} / {total}
+        </b>{' '}
+        clips recorded or published.{' '}
+        <button className="btn" onClick={downloadAll} disabled={!Object.keys(takes).length}>
+          Download all ({Object.keys(takes).length})
+        </button>
+      </p>
+      <div className="row wrap">
+        <select value={group} onChange={(e) => setGroup(e.target.value)} aria-label="Group">
+          {groups.map((g) => (
+            <option key={g}>{g}</option>
+          ))}
+        </select>
+        <select value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Show">
+          <option value="todo">Still to record</option>
+          <option value="done">Recorded here</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+      <ul className="clip-list">
+        {list.map((c) => (
+          <li key={c.id} className={takes[c.id] ? 'has' : published.has(c.id) ? 'pub' : ''}>
+            <span className="clip-ar" lang="ar">{ar(c.ar)}</span>
+            <span className="clip-en">
+              {c.en} <code>{c.id}</code>
+              {published.has(c.id) && <em> · published</em>}
+            </span>
+            <span className="clip-btns">
+              {rec === c.id ? (
+                <button className="btn rec" onClick={stop}>■ Stop</button>
+              ) : (
+                <button className="btn" onClick={() => start(c.id)} disabled={!!rec}>● Record</button>
+              )}
+              {takes[c.id] && (
+                <>
+                  <button className="btn ghost" onClick={() => playTake(c.id)}>▶</button>
+                  <button className="btn ghost" onClick={() => download(c.id)}>↓</button>
+                  <button className="btn ghost" onClick={() => forget(c.id)} aria-label="Delete take">✕</button>
+                </>
+              )}
+            </span>
+          </li>
+        ))}
+        {!list.length && <li className="muted">Nothing here.</li>}
+      </ul>
+    </section>
+  );
+}
