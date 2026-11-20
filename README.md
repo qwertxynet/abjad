@@ -17,6 +17,9 @@ take it apart into its letters, and put letters back together into new words.
 - **Quizzes:** 10 questions drawn fresh each try; 8 correct gives a **completion code** tied to the student's name, which they submit in Canvas.
   Weeks unlock in order. On a new device, students paste an earned code (or an unlock code from the teacher) on **My codes**.
 - **Teacher pages** (`#/teacher`, password-protected): check codes, make unlock codes, and a **recording studio** for every audio clip.
+  A completion code also carries the quiz's seed, the student's ten answers and the attempt number, so **Check a code** rebuilds the
+  student's quiz and shows every question with their answer and the right one. Students see the same review after they pass.
+  If lesson content changes in a way that changes the quizzes, bump `QUIZ_VERSION` in `src/quiz.js`.
 
 The interface is in English; all Arabic has full tashkeel with an on/off switch. Progress is saved in the browser only.
 

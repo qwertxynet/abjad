@@ -4,6 +4,9 @@ import { LESSON_ORDER } from '../data/weeks.js';
 import { CLIPS } from './clips.js';
 import { CodeBox } from '../components/Quiz.jsx';
 import { encodeWav, makeZip, idb } from './audio-tools.js';
+import { drawQuiz, QUIZ_VERSION } from '../quiz.js';
+import { weekByN } from '../data/weeks.js';
+import QuizReview from '../components/QuizReview.jsx';
 
 export default function Teacher({ tab }) {
   const [ok, setOk] = useState(false);
@@ -72,7 +75,7 @@ function Check() {
       {rows.length > 0 && (
         <table className="tbl">
           <thead>
-            <tr><th>Code</th><th>Valid for this name?</th><th>Week</th><th>Score</th><th>Date</th></tr>
+            <tr><th>Code</th><th>Valid for this name?</th><th>Week</th><th>Score</th><th>Date</th><th>Attempt</th></tr>
           </thead>
           <tbody>
             {rows.map((r, i) => (
@@ -82,12 +85,40 @@ function Check() {
                 <td>{r.kind === 'lesson' ? r.week : r.kind === 'unlock' ? `unlock ≤ ${r.upTo}` : ''}</td>
                 <td>{r.kind === 'lesson' ? r.score + '%' : ''}</td>
                 <td>{r.kind === 'lesson' ? `${r.month}/${r.day}` : ''}</td>
+                <td>{r.detail ? r.detail.attempt : ''}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+      {rows.filter((r) => r.ok && r.detail).map((r) => (
+        <StudentQuiz key={r.code} name={name} r={r} />
+      ))}
       <p className="hint">The score is the best one the student chose to submit; they can retake quizzes as often as they like.</p>
+    </section>
+  );
+}
+
+function StudentQuiz({ name, r }) {
+  const wk = weekByN[r.week];
+  const questions = useMemo(() => (wk ? drawQuiz(r.week, r.detail.seed) : []), [wk, r.week, r.detail.seed]);
+  if (!wk) return null;
+  const right = questions.filter((q, i) => q.answer === r.detail.picks[i]).length;
+  const matches = Math.round((right / questions.length) * 100) === r.score;
+  return (
+    <section className="student-quiz">
+      <h2>
+        Week {r.week} · {name} · {r.score}% · {r.month}/{r.day} · attempt {r.detail.attempt}
+      </h2>
+      {(r.detail.version !== QUIZ_VERSION || !matches) && (
+        <p className="verdict wrong">
+          This code was made with an older version of the quiz questions, so the questions below may not be exactly the ones the student saw.
+        </p>
+      )}
+      <p className="muted">
+        {right} of {questions.length} correct. Missed: {questions.filter((q, i) => q.answer !== r.detail.picks[i]).length || 'none'}.
+      </p>
+      <QuizReview questions={questions} picks={r.detail.picks} teacher />
     </section>
   );
 }

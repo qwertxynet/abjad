@@ -403,3 +403,28 @@ input, select, textarea {
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* ---------- Quiz review (student after a pass, and the teacher page) ---------- */
+.review { list-style: none; padding: 0; display: grid; gap: 10px; text-align: left; counter-reset: rv; }
+.rv { background: var(--paper); border: 1px solid var(--line); border-left: 5px solid var(--green); border-radius: 10px; padding: 10px 14px; counter-increment: rv; }
+.rv.bad { border-left-color: var(--red); }
+.rv-head { display: flex; gap: 10px; align-items: center; }
+.rv-head::before { content: counter(rv) '.'; font-weight: 700; color: var(--ink-2); }
+.rv-mark { font-weight: 700; font-size: 1.2em; }
+.rv.ok .rv-mark { color: var(--green); }
+.rv.bad .rv-mark { color: var(--red); }
+.rv-prompt { flex: 1; }
+.rv-note { display: block; font-size: 0.85em; color: var(--ink-2); font-style: italic; }
+.rv-ar { font-size: 1.8em; margin: 4px 0; text-align: right; }
+.rv-passage { font-size: 0.95em; margin: 4px 0; }
+.rv-passage p { margin: 2px 0; text-align: right; font-size: 1.2em; }
+.rv-opts { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 4px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.rv-opts li { display: flex; gap: 8px; align-items: center; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); flex-wrap: wrap; }
+.rv-opts li.right { background: var(--right-bg); border-color: var(--green); }
+.rv-opts li.wrong { background: var(--wrong-bg); border-color: var(--red); }
+.rv-opts .ar { font-size: 1.4em; }
+.rv-opts .ar.big { font-size: 1.8em; }
+.rv-dot { width: 1.2em; text-align: center; font-weight: 700; }
+.rv-who { font-size: 0.8em; color: var(--ink-2); }
+.student-quiz { margin-top: 20px; }
+.student-quiz h2 { margin-bottom: 0; }

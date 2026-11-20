@@ -1,8 +1,16 @@
-// Builds the question bank for a lesson. A quiz draws 10 questions at random; 8 correct passes.
-// Question: { kind, prompt, ar?, pic?, audio?, options: [{ label, ar? }], answer, explain? }
+// Builds the question bank for a lesson. A quiz draws 10 questions; 8 correct passes.
+// Question: { kind, prompt, ar?, pic?, audio?, fallback?, options: [{ label, ar? }], answer }
+//
+// Every quiz is built from a numbered seed, so the same seed always rebuilds the same 10 questions with the same
+// options. The completion code carries the seed and the student's picks, which lets the teacher page show the
+// student's quiz again. For that to work the bank must not depend on anything that changes over time: listening
+// questions are always in the bank, and are shown as reading questions (their `fallback`) until the clip is recorded.
+// If lesson content changes in a way that alters the bank, bump QUIZ_VERSION.
 import { WEEKS, weekByN, COUNTRIES } from './data/weeks.js';
 import { LETTERS, byChar, forms } from './data/letters.js';
-import { shuffle, sample, strip, splitLetters, baseLetter, hasAudio } from './lib.js';
+import { shuffle, sample, strip, splitLetters, baseLetter } from './lib.js';
+
+export const QUIZ_VERSION = 1;
 
 const POS = { initial: 'start', medial: 'middle', final: 'end', isolated: 'standing alone' };
 
@@ -59,9 +67,9 @@ function part1Bank(wk) {
       bank.push({ kind: 'spell', prompt: 'Which letters make up this word?', ar: wd.ar, options: opts.map((o) => ({ ar: o, spaced: true })), answer: opts.indexOf(right) });
     }
     // 7. Listening
-    if (hasAudio('w-' + wd.id)) {
+    {
       const c7 = choices(wd, known, 4, (x) => strip(x.ar));
-      bank.push({ kind: 'listen', prompt: 'Listen. Which word do you hear?', audio: 'w-' + wd.id, options: c7.opts.map((o) => ({ ar: o.ar })), answer: c7.answer });
+      bank.push({ kind: 'listen', prompt: 'Listen. Which word do you hear?', audio: 'w-' + wd.id, fallback: { prompt: `Which word means “${wd.en}”?`, pic: wd.pic }, options: c7.opts.map((o) => ({ ar: o.ar })), answer: c7.answer });
     }
   }
 
@@ -87,9 +95,9 @@ function part1Bank(wk) {
     bank.push({ kind: 'name', prompt: `Which letter is ${l.name} (${l.nameEn})?`, options: c6.opts.map((o) => ({ ar: o.char, big: true })), answer: c6.answer });
     // Joins or not
     bank.push({ kind: 'joins', prompt: `Does ${l.char} join to the letter after it (on its left)?`, options: [{ label: 'Yes' }, { label: 'No, never' }], answer: l.joins ? 0 : 1 });
-    if (hasAudio('ls-' + l.char.codePointAt(0).toString(16))) {
+    {
       const c8 = choices(l, LETTERS.filter((x) => x.week <= wk.n), 4, (x) => x.char);
-      bank.push({ kind: 'listen', prompt: 'Listen to the syllables. Which letter is it?', audio: 'ls-' + l.char.codePointAt(0).toString(16), options: c8.opts.map((o) => ({ ar: o.char, big: true })), answer: c8.answer });
+      bank.push({ kind: 'listen', prompt: 'Listen to the syllables. Which letter is it?', audio: 'ls-' + l.char.codePointAt(0).toString(16), fallback: { prompt: `Which letter is ${l.nameEn}, as in ${l.char === 'ا' ? 'بَا دَا رَا' : l.char + 'َ ' + l.char + 'ُ ' + l.char + 'ِ'}?` }, options: c8.opts.map((o) => ({ ar: o.char, big: true })), answer: c8.answer });
     }
   }
 
@@ -118,9 +126,9 @@ function part2Bank(wk) {
     bank.push({ kind: 'pick-word', prompt: `Which is “${wd.en}”?`, pic: /^(c-|clock|d\d|mon-|cal-)/.test(wd.pic || '') ? wd.pic : null, options: c1.opts.map((o) => ({ ar: o.ar })), answer: c1.answer });
     const c2 = choices(wd, pool, 4, (x) => x.en);
     bank.push({ kind: 'pick-meaning', prompt: 'What does it mean?', ar: wd.ar, options: c2.opts.map((o) => ({ label: o.en })), answer: c2.answer });
-    if (hasAudio('w-' + wd.id)) {
+    {
       const c3 = choices(wd, pool, 4, (x) => x.en);
-      bank.push({ kind: 'listen', prompt: 'Listen. Which word do you hear?', audio: 'w-' + wd.id, options: c3.opts.map((o) => ({ ar: o.ar })), answer: c3.answer });
+      bank.push({ kind: 'listen', prompt: 'Listen. Which word do you hear?', audio: 'w-' + wd.id, fallback: { prompt: `Which word means “${wd.en}”?` }, options: c3.opts.map((o) => ({ ar: o.ar })), answer: c3.answer });
     }
   }
   // Reading comprehension (the passage is shown with the question)
@@ -159,7 +167,28 @@ export function buildBank(n) {
   return bank;
 }
 
-export function drawQuiz(n, k = 10) {
+/** Runs fn with Math.random replaced by a seeded generator (mulberry32), so the result depends only on the seed. */
+function withSeed(seed, fn) {
+  const orig = Math.random;
+  let a = seed >>> 0 || 1;
+  Math.random = () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  try {
+    return fn();
+  } finally {
+    Math.random = orig;
+  }
+}
+export const newSeed = () => Math.floor(Math.random() * 0xffffff) + 1; // 24 bits
+
+export function drawQuiz(n, seed = newSeed(), k = 10) {
+  return withSeed(seed, () => draw(n, k));
+}
+function draw(n, k) {
   const bank = buildBank(n);
   // Spread question kinds: take at most 3 of any kind.
   const byKind = {};

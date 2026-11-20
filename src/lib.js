@@ -49,6 +49,15 @@ export const setName = (name) => update((s) => ({ ...s, name: name.trim().replac
 export const markStep = (n, step) =>
   update((s) => ({ ...s, steps: { ...s.steps, [n]: { ...(s.steps?.[n] || {}), [step]: true } } }));
 export const saveCode = (n, entry) => update((s) => ({ ...s, codes: { ...s.codes, [n]: entry } }));
+/** Counts a finished quiz attempt for week n and returns the new count. */
+export function countAttempt(n) {
+  let k = 1;
+  update((s) => {
+    k = (s.attempts?.[n] || 0) + 1;
+    return { ...s, attempts: { ...s.attempts, [n]: k } };
+  });
+  return k;
+}
 export const addUnlock = (upTo) => update((s) => ({ ...s, unlockedTo: Math.max(s.unlockedTo || 1, upTo) }));
 
 /** Lesson n is open if it is Week 1, its previous lesson's quiz was passed, or an unlock covers it. */
@@ -135,10 +144,39 @@ function sig(str) {
 }
 const pad = (n, k = 2) => String(n).padStart(k, '0');
 
-/** W03-90-0220-ABCDEF : week, score %, month+day, signature over the student's name. */
-export function makeCode(name, week, score, date = new Date()) {
+// Answer details: quiz version (3 bits) · attempt (5 bits, 1–31) · seed (24 bits) · ten picks (2 bits each) = 52 bits,
+// written as 11 base-32 characters.
+function packDetail({ version, attempt, seed, picks }) {
+  let v = BigInt(version & 7);
+  v = (v << 5n) | BigInt(Math.min(Math.max(attempt, 1), 31));
+  v = (v << 24n) | BigInt(seed & 0xffffff);
+  for (let i = 0; i < 10; i++) v = (v << 2n) | BigInt((picks[i] ?? 0) & 3);
+  let out = '';
+  for (let i = 0; i < 11; i++) {
+    out = B32[Number(v & 31n)] + out;
+    v >>= 5n;
+  }
+  return out;
+}
+function unpackDetail(str) {
+  let v = 0n;
+  for (const ch of str) v = (v << 5n) | BigInt(B32.indexOf(ch));
+  const picks = [];
+  for (let i = 0; i < 10; i++) {
+    picks.unshift(Number(v & 3n));
+    v >>= 2n;
+  }
+  const seed = Number(v & 0xffffffn);
+  v >>= 24n;
+  const attempt = Number(v & 31n);
+  v >>= 5n;
+  return { version: Number(v & 7n), attempt, seed, picks };
+}
+
+/** W03-80-0220-DDDDDDDDDDD-SSSSSS : week, score %, month+day, answer details, signature over the student's name. */
+export function makeCode(name, week, score, detail, date = new Date()) {
   const md = pad(date.getMonth() + 1) + pad(date.getDate());
-  const body = `W${pad(week)}-${pad(score, 2)}-${md}`;
+  const body = `W${pad(week)}-${pad(score, 2)}-${md}-${packDetail(detail)}`;
   return `${body}-${sig(normName(name) + '|' + body)}`;
 }
 /** U08-ABCDEF : opens every lesson up to Week 8 for this student. */
@@ -146,15 +184,15 @@ export const makeUnlock = (name, upTo) => {
   const body = `U${pad(upTo)}`;
   return `${body}-${sig(normName(name) + '|' + body)}`;
 };
-const CODE_RE = /^W(\d{2})-(\d{2,3})-(\d{2})(\d{2})-([0-9A-Z]{6})$/;
+const CODE_RE = /^W(\d{2})-(\d{2,3})-(\d{2})(\d{2})-(?:([0-9A-Z]{11})-)?([0-9A-Z]{6})$/;
 const UNLOCK_RE = /^U(\d{2})-([0-9A-Z]{6})$/;
 export function checkCode(name, raw) {
   const code = (raw || '').trim().toUpperCase().replace(/\s+/g, '');
   let m = code.match(CODE_RE);
   if (m) {
     const body = code.slice(0, code.lastIndexOf('-'));
-    const ok = sig(normName(name) + '|' + body) === m[5];
-    return { kind: 'lesson', ok, week: +m[1], score: +m[2], month: +m[3], day: +m[4], code };
+    const ok = sig(normName(name) + '|' + body) === m[6];
+    return { kind: 'lesson', ok, week: +m[1], score: +m[2], month: +m[3], day: +m[4], detail: m[5] ? unpackDetail(m[5]) : null, code };
   }
   m = code.match(UNLOCK_RE);
   if (m) {
