@@ -428,3 +428,15 @@ input, select, textarea {
 .rv-who { font-size: 0.8em; color: var(--ink-2); }
 .student-quiz { margin-top: 20px; }
 .student-quiz h2 { margin-bottom: 0; }
+
+.syl-btn {
+  font: inherit; font-family: var(--f-ar); font-size: 1em; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--paper-2); color: var(--blue); cursor: pointer; min-height: 48px; line-height: 1.5;
+}
+.syl-btn:active { background: var(--wash-b); }
+.syl-hint { font-family: var(--f-ui); font-size: 0.45em; color: var(--ink-2); flex-basis: 100%; text-align: right; }
+
+.clip-tip { color: var(--red); font-style: italic; }
+.clip-segs { grid-column: 1 / -1; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; font-size: 0.9em; }
+.clip-segs.good { color: var(--green); }
+.clip-segs.bad { color: var(--red); font-weight: 700; }

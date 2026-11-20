@@ -110,14 +110,61 @@ export function useAudioSet() {
   return a;
 }
 export const hasAudio = (id) => available.has(id);
+
+// Where each syllable sits inside a syllable-drill clip: { 'ls-628': [[start, end], …] } in seconds.
+let segments = {};
+fetch('./audio/segments.json', { cache: 'no-cache' })
+  .then((r) => (r.ok ? r.json() : {}))
+  .then((j) => {
+    segments = j || {};
+    available = new Set(available); // a new object, so components re-render
+    audioListeners.forEach((l) => l(available));
+  })
+  .catch(() => {});
+/** True when syllable i of a drill clip can be played on its own. */
+export const hasSegment = (id, i) => available.has(id) && !!segments[id]?.[i];
+
 let current = null;
+let stopTimer = null;
+const players = {};
+const stop = () => {
+  clearTimeout(stopTimer);
+  clearInterval(stopTimer);
+  if (current) current.pause();
+};
 export function play(id) {
   if (!available.has(id)) return false;
-  if (current) current.pause();
+  stop();
   current = new Audio(`./audio/${id}.mp3`);
   current.play().catch(() => {});
   return true;
 }
+/** Plays one syllable of a drill clip (one MP3, played from its start to its end time). */
+export function playSegment(id, i) {
+  const seg = segments[id]?.[i];
+  if (!available.has(id) || !seg) return false;
+  stop();
+  const a = (players[id] ||= new Audio(`./audio/${id}.mp3`));
+  current = a;
+  const go = () => {
+    a.currentTime = seg[0];
+    a.play().catch(() => {});
+    // Watch the real playback position (playback can stall briefly after a seek) and stop at the syllable's end.
+    const started = Date.now();
+    stopTimer = setInterval(() => {
+      if (a.currentTime >= seg[1] || a.paused || Date.now() - started > 5000) {
+        clearInterval(stopTimer);
+        a.pause();
+      }
+    }, 15);
+  };
+  if (a.readyState >= 1) go();
+  else a.addEventListener('loadedmetadata', go, { once: true });
+  return true;
+}
+/** Plays a question's sound: a whole clip, or one syllable when the question names a segment. */
+export const playQ = (q) => (q.seg !== undefined ? playSegment(q.audio, q.seg) : play(q.audio));
+export const canPlayQ = (q) => !!q.audio && (q.seg !== undefined ? hasSegment(q.audio, q.seg) : hasAudio(q.audio));
 
 // ---------- Completion and unlock codes ----------
 // Not secure (anything in a static site can be read), but enough to stop casual copying between students.

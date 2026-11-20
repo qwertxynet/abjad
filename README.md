@@ -34,6 +34,12 @@ npm run audio
 
 This converts them to MP3 in `public/audio/` and updates `manifest.json`; each clip's sound button appears as soon as its file exists.
 
+**Syllable drills** (the `ls-…` clips, e.g. بَ بُ بِ بَا بُو بِي): leave about half a second between syllables. The studio checks each
+take right away and shows one play button per syllable it found (it warns you if the count is wrong). `npm run audio` finds
+the same pauses and writes `public/audio/segments.json`, so students can tap each syllable in the Meet step and the alphabet
+chart, and the quizzes and the *Syllable sounds* game can ask “which syllable do you hear?”: the same letter with different
+vowels (بَ / بُ / بِ / بُو), or the same vowel with letters that sound alike (حَ / هَ / خَ / عَ).
+
 ## Editing content
 
 All lesson content is in **`src/data/weeks.js`** (words, phrases, sentences, patterns, readings) and **`src/data/letters.js`**.

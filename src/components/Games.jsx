@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { WEEKS } from '../data/weeks.js';
 import { LETTERS, byChar, forms } from '../data/letters.js';
-import { shuffle, sample, strip, splitLetters, useAr, useAudioSet, play } from '../lib.js';
+import { shuffle, sample, strip, splitLetters, useAr, useAudioSet, play, playQ, canPlayQ } from '../lib.js';
+import { buildBank } from '../quiz.js';
 import { Ar, Pic } from './bits.jsx';
 
 // Finish any two games to complete the PLAY step.
@@ -22,6 +23,21 @@ export default function Games({ wk, onDone }) {
       ];
   const hasListen = wk.words.some((w) => audio.has('w-' + w.id));
   if (hasListen) list.push({ id: 'listen', label: 'Listen and pick', desc: 'Hear a word and choose it.' });
+  // Syllable rounds from every letter learned so far (three fresh draws per week for variety), as recorded.
+  const sylQs = useMemo(() => {
+    if (!p1) return [];
+    const seen = new Set();
+    return WEEKS.filter((x) => x.part === 1 && x.n <= wk.n)
+      .flatMap((x) => [0, 1, 2].flatMap(() => buildBank(x.n)))
+      .filter((q) => q.kind.startsWith('syl-') && canPlayQ(q))
+      .filter((q) => {
+        const k = q.audio + q.seg + q.options.map((o) => o.ar).sort().join();
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+  }, [wk, p1, audio]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (sylQs.length >= 3) list.push({ id: 'syllables', label: 'Syllable sounds', desc: 'Hear a syllable and tap it: بَ or بُ? حَ or هَ?' });
   const win = (id) => {
     setWon(new Set([...won, id]));
     setGame(null);
@@ -36,6 +52,7 @@ export default function Games({ wk, onDone }) {
         {game === 'pairs' && <Pairs {...props} />}
         {game === 'picture' && <PicturePick {...props} />}
         {game === 'listen' && <Listen {...props} />}
+        {game === 'syllables' && <Syllables {...props} pool={sylQs} />}
       </div>
     );
   }
@@ -348,6 +365,43 @@ function Listen({ wk, onWin, onQuit }) {
             onClick={() => {
               setPickd(o.id);
               if (o.id === w.id) setTimeout(() => { setI(i + 1); setPickd(null); }, 700);
+            }}
+          >
+            <span lang="ar">{ar(o.ar)}</span>
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function Syllables({ pool, onWin, onQuit }) {
+  const ar = useAr();
+  const rounds = useMemo(() => sample(pool, Math.min(8, pool.length)), [pool]);
+  const [i, setI] = useState(0);
+  const [pickd, setPickd] = useState(null);
+  const [tries, setTries] = useState(0);
+  if (i >= rounds.length) return <Won onWin={onWin} text={`Well done! ${rounds.length} syllables, ${tries} tries.`} />;
+  const q = rounds[i];
+  return (
+    <>
+      <Head title="Syllable sounds" onQuit={onQuit}>
+        <p>Press play, then tap the syllable you hear. Listen for the vowel, and for the letter: is it a light sound or a heavy one, from the throat or the lips?</p>
+      </Head>
+      <div className="next-row center">
+        <button className="btn" onClick={() => playQ(q)}>▶ Play</button>
+        <span className="muted">{i + 1} / {rounds.length}</span>
+      </div>
+      <div className="opts grid4">
+        {q.options.map((o, k) => (
+          <button
+            key={k}
+            className={'opt big' + (pickd === k ? (k === q.answer ? ' right' : ' wrong') : '')}
+            onClick={() => {
+              setPickd(k);
+              setTries((t) => t + 1);
+              if (k === q.answer) setTimeout(() => { setI(i + 1); setPickd(null); }, 650);
+              else playQ(q);
             }}
           >
             <span lang="ar">{ar(o.ar)}</span>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { drawQuiz, newSeed, QUIZ_VERSION } from '../quiz.js';
-import { useStore, makeCode, saveCode, markStep, countAttempt, href, play, hasAudio, useAr } from '../lib.js';
+import { useStore, makeCode, saveCode, markStep, countAttempt, href, playQ, canPlayQ, useAudioSet, useAr } from '../lib.js';
 import { Ar, Pic, Mixed } from './bits.jsx';
 import QuizReview from './QuizReview.jsx';
 
@@ -17,6 +17,7 @@ export default function Quiz({ wk, next }) {
   const [right, setRight] = useState(0);
   const [result, setResult] = useState(null);
   const ar = useAr();
+  useAudioSet(); // re-render when the recordings list arrives
   const saved = s.codes?.[wk.n];
 
   if (!s.name)
@@ -75,7 +76,7 @@ export default function Quiz({ wk, next }) {
 
   const q0 = qs[i];
   // A listening question whose clip isn't recorded yet is shown as its reading version.
-  const asReading = q0.audio && !hasAudio(q0.audio) && q0.fallback;
+  const asReading = q0.audio && !canPlayQ(q0) && q0.fallback;
   const q = asReading ? { ...q0, audio: null, prompt: q0.fallback.prompt, pic: q0.fallback.pic } : q0;
   const answer = (k) => {
     if (picked !== null) return;
@@ -123,7 +124,7 @@ export default function Quiz({ wk, next }) {
         <p className="q-prompt"><Mixed text={q.prompt} /></p>
         {q.pic && <Pic id={q.pic} size={96} />}
         {q.audio && (
-          <button className="btn" onClick={() => play(q.audio)}>
+          <button className="btn" onClick={() => playQ(q)}>
             ▶ Play
           </button>
         )}

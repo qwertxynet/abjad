@@ -7,10 +7,20 @@
 // questions are always in the bank, and are shown as reading questions (their `fallback`) until the clip is recorded.
 // If lesson content changes in a way that alters the bank, bump QUIZ_VERSION.
 import { WEEKS, weekByN, COUNTRIES } from './data/weeks.js';
-import { LETTERS, byChar, forms } from './data/letters.js';
+import { LETTERS, byChar, forms, syllables } from './data/letters.js';
 import { shuffle, sample, strip, splitLetters, baseLetter } from './lib.js';
 
-export const QUIZ_VERSION = 1;
+export const QUIZ_VERSION = 2;
+
+// Letters beginners mix up by ear; the "same vowel, different letter" question prefers these as distractors.
+const CONFUSE = {
+  'ح': ['ه', 'خ', 'ع'], 'ه': ['ح', 'ء'], 'خ': ['ح', 'غ', 'ك'], 'ع': ['ح', 'غ', 'ء'], 'غ': ['خ', 'ع', 'ق'],
+  'س': ['ص', 'ث', 'ش'], 'ص': ['س', 'ض', 'ث'], 'ش': ['س', 'ج'], 'ض': ['د', 'ص', 'ظ'], 'د': ['ض', 'ذ', 'ت'],
+  'ذ': ['ز', 'ظ', 'ث'], 'ز': ['ذ', 'ظ', 'س'], 'ظ': ['ذ', 'ض', 'ز'], 'ث': ['س', 'ذ', 'ت'], 'ت': ['ط', 'ث', 'د'],
+  'ط': ['ت', 'ظ', 'ض'], 'ك': ['ق', 'خ'], 'ق': ['ك', 'غ'], 'ب': ['ف', 'م'], 'ف': ['ث', 'ب'], 'ر': ['ل', 'غ'],
+  'ل': ['ر', 'ن'], 'ن': ['م', 'ل'], 'م': ['ن', 'ب'], 'و': ['ف', 'ب'], 'ي': ['ج', 'ل'], 'ج': ['ش', 'ي'],
+};
+const VOWEL = ['a fatha (a)', 'a damma (u)', 'a kasra (i)', 'a long ā (ـَا)', 'a long ū (ـُو)', 'a long ī (ـِي)'];
 
 const POS = { initial: 'start', medial: 'middle', final: 'end', isolated: 'standing alone' };
 
@@ -93,6 +103,24 @@ function part1Bank(wk) {
     // 6. Letter name
     const c6 = choices(l, LETTERS.filter((x) => x.week <= wk.n), 4, (x) => x.char);
     bank.push({ kind: 'name', prompt: `Which letter is ${l.name} (${l.nameEn})?`, options: c6.opts.map((o) => ({ ar: o.char, big: true })), answer: c6.answer });
+    // Syllables, played one at a time from the teacher's drill recording (Khalduniyya: letter + vowel).
+    if (l.char !== 'ا') {
+      const syl = syllables(l.char);
+      const clip = 'ls-' + l.char.codePointAt(0).toString(16);
+      // Same letter, different vowel: بَ / بُ / بِ / بُو
+      const t = Math.floor(Math.random() * 6);
+      const idx = shuffle([t, ...shuffle([0, 1, 2, 3, 4, 5].filter((x) => x !== t)).slice(0, 3)]);
+      bank.push({ kind: 'syl-vowel', prompt: 'Listen. Which syllable do you hear?', audio: clip, seg: t, fallback: { prompt: `Which is ${l.char} with ${VOWEL[t]}?` }, options: idx.map((x) => ({ ar: syl[x], big: true })), answer: idx.indexOf(t) });
+      // Same vowel, different letter: حَ / هَ / خَ / عَ (look-alikes and sound-alikes first)
+      const v = Math.floor(Math.random() * 3);
+      const known = LETTERS.filter((x) => x.week <= wk.n && x.char !== l.char && x.char !== 'ا').map((x) => x.char);
+      const near = (CONFUSE[l.char] || []).filter((c) => known.includes(c));
+      const distract = [...shuffle(near), ...shuffle(known.filter((c) => !near.includes(c)))].slice(0, 3);
+      if (distract.length === 3) {
+        const opts = shuffle([l.char, ...distract]);
+        bank.push({ kind: 'syl-letter', prompt: 'Listen. Which syllable do you hear?', audio: clip, seg: v, fallback: { prompt: `Which is ${l.nameEn} with ${VOWEL[v]}?` }, options: opts.map((c) => ({ ar: syllables(c)[v], big: true })), answer: opts.indexOf(l.char) });
+      }
+    }
     // Joins or not
     bank.push({ kind: 'joins', prompt: `Does ${l.char} join to the letter after it (on its left)?`, options: [{ label: 'Yes' }, { label: 'No, never' }], answer: l.joins ? 0 : 1 });
     {

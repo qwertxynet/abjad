@@ -1,4 +1,4 @@
-import { useAr, hasAudio, play } from '../lib.js';
+import { useAr, playQ, canPlayQ } from '../lib.js';
 import { Ar, Pic, Mixed } from './bits.jsx';
 
 /** One quiz, question by question: the student's pick, the right answer, ✓ / ✗. */
@@ -9,7 +9,7 @@ export default function QuizReview({ questions, picks, teacher = false }) {
       {questions.map((q, i) => {
         const pick = picks[i];
         const ok = pick === q.answer;
-        const shownAsReading = q.audio && q.fallback && !hasAudio(q.audio);
+        const shownAsReading = q.audio && q.fallback && !canPlayQ(q);
         const prompt = shownAsReading && !teacher ? q.fallback.prompt : q.prompt;
         const pic = shownAsReading && !teacher ? q.fallback.pic : q.pic;
         return (
@@ -22,8 +22,8 @@ export default function QuizReview({ questions, picks, teacher = false }) {
                   <span className="rv-note">
                     {' '}
                     Listening question{q.fallback ? `; shown as “${q.fallback.prompt}” while the recording didn’t exist` : ''}.{' '}
-                    {hasAudio(q.audio) && (
-                      <button className="chip" onClick={() => play(q.audio)}>
+                    {canPlayQ(q) && (
+                      <button className="chip" onClick={() => playQ(q)}>
                         ▶ clip
                       </button>
                     )}

@@ -3,7 +3,8 @@ import { checkCode, checkPassword, makeUnlock, useAudioSet, useAr } from '../lib
 import { LESSON_ORDER } from '../data/weeks.js';
 import { CLIPS } from './clips.js';
 import { CodeBox } from '../components/Quiz.jsx';
-import { encodeWav, makeZip, idb } from './audio-tools.js';
+import { encodeWav, makeZip, idb, readWav } from './audio-tools.js';
+import { findSegments, expectedSyllables, isSyllableClip } from './segments.js';
 import { drawQuiz, QUIZ_VERSION } from '../quiz.js';
 import { weekByN } from '../data/weeks.js';
 import QuizReview from '../components/QuizReview.jsx';
@@ -154,9 +155,19 @@ function Studio() {
   const media = useRef(null);
   const ar = useAr();
 
+  const [segs, setSegs] = useState({}); // syllable clips: id → [[start, end], …] found in the take
+  const analyse = async (id, blob) => {
+    if (!isSyllableClip(id)) return;
+    const { rate, samples } = await readWav(blob);
+    const found = findSegments(samples, rate);
+    setSegs((x) => ({ ...x, [id]: found }));
+  };
   useEffect(() => {
-    idb.all().then((all) => setTakes(all));
-  }, []);
+    idb.all().then((all) => {
+      setTakes(all);
+      for (const [id, b] of Object.entries(all)) analyse(id, b);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const start = async (id) => {
     try {
@@ -169,6 +180,7 @@ function Studio() {
         const wav = await encodeWav(new Blob(chunks, { type: mr.mimeType }));
         await idb.put(id, wav);
         setTakes((t) => ({ ...t, [id]: wav }));
+        analyse(id, wav);
         setRec(null);
       };
       mr.start();
@@ -180,6 +192,14 @@ function Studio() {
   };
   const stop = () => media.current?.stop();
   const playTake = (id) => new Audio(URL.createObjectURL(takes[id])).play();
+  const playPart = (id, [a, b]) => {
+    const el = new Audio(URL.createObjectURL(takes[id]));
+    el.addEventListener('loadedmetadata', () => {
+      el.currentTime = a;
+      el.play();
+      setTimeout(() => el.pause(), (b - a) * 1000);
+    }, { once: true });
+  };
   const download = (id) => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(takes[id]);
@@ -243,7 +263,26 @@ function Studio() {
             <span className="clip-en">
               {c.en} <code>{c.id}</code>
               {published.has(c.id) && <em> · published</em>}
+              {isSyllableClip(c.id) && !takes[c.id] && <span className="clip-tip"> Pause about half a second between syllables.</span>}
             </span>
+            {isSyllableClip(c.id) && takes[c.id] && segs[c.id] && (
+              <span className={'clip-segs ' + (segs[c.id].length === expectedSyllables(c.id) ? 'good' : 'bad')}>
+                {segs[c.id].length === expectedSyllables(c.id) ? (
+                  <>
+                    ✓ {segs[c.id].length} syllables found:{' '}
+                    {segs[c.id].map((sg, k) => (
+                      <button key={k} className="chip" onClick={() => playPart(c.id, sg)} aria-label={`Play syllable ${k + 1}`}>
+                        ▶ {k + 1}
+                      </button>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    ✗ Found {segs[c.id].length} syllables, expected {expectedSyllables(c.id)}. Re-record with a clear pause between each one.
+                  </>
+                )}
+              </span>
+            )}
             <span className="clip-btns">
               {rec === c.id ? (
                 <button className="btn rec" onClick={stop}>■ Stop</button>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { LETTERS, forms } from '../data/letters.js';
 import { LESSON_ORDER } from '../data/weeks.js';
 import { useStore, setName, checkCode, addUnlock, saveCode, markStep, isOpen, href } from '../lib.js';
-import { Ar, Say, letterClip } from '../components/bits.jsx';
+import { Ar, Say, letterClip, SyllableRow } from '../components/bits.jsx';
 import { CodeBox } from '../components/Quiz.jsx';
 
 export function Alphabet() {
@@ -43,6 +43,7 @@ function AbcDetail({ c }) {
         </h2>
         <p>{l.sound}</p>
         <p className={'joins ' + (l.joins ? 'yes' : 'no')}>{l.joins ? 'Joins on both sides.' : 'Never joins to the letter after it.'}</p>
+        <SyllableRow c={c} />
       </div>
       <table className="forms">
         <thead>

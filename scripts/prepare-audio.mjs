@@ -1,9 +1,16 @@
 // Converts the teacher's recordings (source/audio/*.wav, from the app's recording studio) into small MP3s in
 // public/audio/, and rewrites public/audio/manifest.json, the list of clips the app may play.
+// For the syllable drills (ls-*.wav) it also finds the pauses between syllables and writes
+// public/audio/segments.json, so the app can play each syllable on its own.
 // Run with: npm run audio
-const fs = require('fs');
-const path = require('path');
-const vm = require('vm');
+import fs from 'fs';
+import path from 'path';
+import vm from 'vm';
+import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+import { findSegments, expectedSyllables, isSyllableClip } from '../src/teacher/segments.js';
+const require = createRequire(import.meta.url);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // lamejs's CommonJS entry has a known "MPEGMode is not defined" bug; its single-file bundle works.
 const ctx = {};
 vm.runInNewContext(fs.readFileSync(require.resolve('lamejs/lame.all.js'), 'utf8'), ctx);
@@ -51,14 +58,28 @@ function toMp3({ rate, samples }) {
 }
 
 let made = 0;
+const segFile = path.join(OUT, 'segments.json');
+const segments = fs.existsSync(segFile) ? JSON.parse(fs.readFileSync(segFile, 'utf8')) : {};
+const problems = [];
 for (const f of fs.readdirSync(SRC).filter((f) => f.toLowerCase().endsWith('.wav'))) {
   const id = f.replace(/\.wav$/i, '');
   const out = path.join(OUT, id + '.mp3');
   const src = path.join(SRC, f);
-  if (fs.existsSync(out) && fs.statSync(out).mtimeMs >= fs.statSync(src).mtimeMs) continue;
-  fs.writeFileSync(out, toMp3(readWav(src)));
+  if (fs.existsSync(out) && fs.statSync(out).mtimeMs >= fs.statSync(src).mtimeMs && (!isSyllableClip(id) || segments[id])) continue;
+  const wav = readWav(src);
+  fs.writeFileSync(out, toMp3(wav));
   made++;
+  if (isSyllableClip(id)) {
+    const segs = findSegments(Float32Array.from(wav.samples, (v) => v / 32768), wav.rate);
+    if (segs.length === expectedSyllables(id)) segments[id] = segs;
+    else {
+      delete segments[id];
+      problems.push(`${id}: found ${segs.length} syllables, expected ${expectedSyllables(id)}. Re-record it with a clear pause between syllables.`);
+    }
+  }
 }
+fs.writeFileSync(segFile, JSON.stringify(segments));
 const list = fs.readdirSync(OUT).filter((f) => f.endsWith('.mp3')).map((f) => f.slice(0, -4)).sort();
 fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(list));
-console.log(`Converted ${made} new recording(s). ${list.length} clip(s) are now live in the app.`);
+console.log(`Converted ${made} new recording(s). ${list.length} clip(s) are now live in the app; ${Object.keys(segments).length} syllable drill(s) can be played one syllable at a time.`);
+for (const p of problems) console.warn('! ' + p);

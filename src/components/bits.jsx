@@ -1,5 +1,6 @@
 import { picMarkup } from '../data/pics.js';
-import { useAr, useAudioSet, play } from '../lib.js';
+import { useAr, useAudioSet, play, playSegment, hasSegment } from '../lib.js';
+import { syllables } from '../data/letters.js';
 
 export function Pic({ id, size = 72, className = '' }) {
   const inner = picMarkup(id);
@@ -82,5 +83,29 @@ export function Mixed({ text }) {
     ) : (
       t
     )
+  );
+}
+
+/** The Khalduniyya syllable drill for one letter. Once the teacher's recording is in, each syllable plays on its own. */
+export function SyllableRow({ c }) {
+  const ar = useAr();
+  useAudioSet();
+  const clip = letterClip(c, 'ls');
+  const syl = c === 'ا' ? ['بَا', 'دَا', 'رَا', 'زَا', 'نَا'] : syllables(c);
+  const tappable = syl.some((_, i) => hasSegment(clip, i));
+  return (
+    <div className="syl" lang="ar" dir="rtl">
+      {syl.map((x, i) =>
+        hasSegment(clip, i) ? (
+          <button key={x} className="syl-btn" onClick={() => playSegment(clip, i)} aria-label={`Hear ${x}`}>
+            {ar(x)}
+          </button>
+        ) : (
+          <span key={x}>{ar(x)}</span>
+        )
+      )}
+      <Say id={clip} label="Hear all the syllables" />
+      {tappable && <span className="syl-hint" dir="ltr" lang="en">Tap a syllable to hear it</span>}
+    </div>
   );
 }

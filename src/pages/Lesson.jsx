@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { weekByN, DATES, COUNTRIES, nextLesson } from '../data/weeks.js';
 import { byChar, forms, syllables, SIGNS, knownBy } from '../data/letters.js';
 import { useStore, markStep, go, href, splitLetters, strip, shuffle, isOpen, useAr } from '../lib.js';
-import { Ar, Pic, Say, Steps, letterClip, Mixed } from '../components/bits.jsx';
+import { Ar, Pic, Say, Steps, letterClip, Mixed, SyllableRow } from '../components/bits.jsx';
 import Trace, { TRACE_TIPS } from '../components/Trace.jsx';
 import Games from '../components/Games.jsx';
 import Quiz from '../components/Quiz.jsx';
@@ -245,14 +245,7 @@ export function LetterCard({ c }) {
         </h2>
         <p>{l.sound}</p>
         <p className={'joins ' + (l.joins ? 'yes' : 'no')}>{l.joins ? 'Joins on both sides.' : 'Never joins to the letter after it (on its left).'}</p>
-        <div className="syl" lang="ar" dir="rtl">
-          {c === 'ا' ? (
-            <span>{ar('بَا  دَا  رَا  زَا  نَا')}</span>
-          ) : (
-            syllables(c).map((x) => <span key={x}>{ar(x)}</span>)
-          )}
-          <Say id={letterClip(c, 'ls')} label="Hear the syllables" />
-        </div>
+        <SyllableRow c={c} />
       </div>
       <table className="forms">
         <thead>

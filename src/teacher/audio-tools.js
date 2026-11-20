@@ -1,5 +1,15 @@
 // Recording helpers for the studio: WAV encoding, a tiny ZIP writer, and IndexedDB storage for takes.
 
+/** Reads one of our own 16-bit mono WAV takes back into samples (−1…1). */
+export async function readWav(blob) {
+  const v = new DataView(await blob.arrayBuffer());
+  const rate = v.getUint32(24, true);
+  const n = (v.byteLength - 44) / 2;
+  const out = new Float32Array(n);
+  for (let i = 0; i < n; i++) out[i] = v.getInt16(44 + i * 2, true) / 32768;
+  return { rate, samples: out };
+}
+
 /** Decodes any recorded blob and re-encodes it as 16-bit mono WAV, trimming silence at both ends. */
 export async function encodeWav(blob) {
   const ctx = new (window.AudioContext || window.webkitAudioContext)();

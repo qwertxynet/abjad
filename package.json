@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "audio": "node scripts/prepare-audio.cjs",
+    "audio": "node scripts/prepare-audio.mjs",
     "clips": "node scripts/list-clips.mjs"
   },
   "dependencies": {
