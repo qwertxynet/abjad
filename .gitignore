@@ -3,3 +3,5 @@ dist
 # Teacher-only: the original recordings, and the document generator (it contains the test answer keys).
 source
 scripts/docs
+PLAN-redesign.md
+scripts/art/*.png

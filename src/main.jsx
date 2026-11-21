@@ -3,6 +3,7 @@ import '@fontsource/noto-naskh-arabic/400.css';
 import '@fontsource/noto-naskh-arabic/600.css';
 import '@fontsource/noto-naskh-arabic/700.css';
 import '@fontsource/amiri/700.css';
+import '@fontsource-variable/fraunces';
 import './styles.css';
 import App from './App.jsx';
 
