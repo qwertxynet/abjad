@@ -20,17 +20,20 @@ export const DATES = {
 export const WEEKS = [
   // ───────────────────────────── Part 1: the letters ─────────────────────────────
   {
-    n: 1, part: 1, title: 'ا د ر ز و ن', titleEn: 'Our first letters',
-    newLetters: ['ا', 'د', 'ر', 'ز', 'و', 'ن'], signs: ['harakat', 'sukun'],
-    intro: 'Arabic is written from right to left, and most letters join the letter after them. Five of this week’s letters (ا د ر ز و) never join to the left, so every word this week is written in separate pieces. Short vowels are small marks above or below the letter.',
+    n: 1, part: 1, title: 'ا د ر ز و ن ي', titleEn: 'Our first letters',
+    newLetters: ['ا', 'د', 'ر', 'ز', 'و', 'ن', 'ي'], signs: ['harakat', 'long', 'sukun'],
+    intro: 'Arabic is written from right to left, and most letters join the letter after them. Five of this week’s letters (ا د ر ز و) never join to the left, so most words this week are written in separate pieces. Short vowels are small marks above or below the letter; the three letters ا و ي make them long: دَ → دَا, دُ → دُو, دِ → دِي.',
     words: [
       w('dar', 'دَار', 'house, home', 'house', 'dār'),
       w('dur', 'دُور', 'houses', 'houses', 'dūr'),
+      w('din', 'دِين', 'religion', 'pray', 'dīn'),
       w('nar', 'نَار', 'fire', 'fire', 'nār'),
       w('nur', 'نُور', 'light', 'light', 'nūr'),
       w('zara', 'زَارَ', 'he visited', 'visit', 'zāra'),
       w('ward', 'وَرْد', 'roses', 'roses', 'ward'),
       w('dawr', 'دَوْر', 'a turn, a role', 'turn', 'dawr'),
+      w('yad', 'يَد', 'hand', 'hand', 'yad'),
+      w('dunya', 'دُنْيَا', 'the world', 'world', 'dunyā'),
       w('nadir', 'نَادِر', 'Nader (a boy’s name)', 'boy', 'nādir'),
       w('rana', 'رَنَا', 'Rana (a girl’s name)', 'girl', 'ranā'),
     ],
@@ -47,9 +50,9 @@ export const WEEKS = [
     ],
   },
   {
-    n: 2, part: 1, title: 'ب ت ث ي', titleEn: 'The dotted family',
-    newLetters: ['ب', 'ت', 'ث', 'ي'], signs: ['long'],
-    intro: 'ب ت ث share one shape; only the dots differ: one below, two above, three above. ي is the long "ee" and the y sound. These letters join on both sides, so now words start to flow together.',
+    n: 2, part: 1, title: 'ب ت ث', titleEn: 'The dotted family',
+    newLetters: ['ب', 'ت', 'ث'], signs: [],
+    intro: 'ب ت ث share one shape; only the dots differ: one below, two above, three above. Like ن and ي, they join on both sides, so now words start to flow together.',
     words: [
       w('bayt', 'بَيْت', 'house', 'house', 'bayt'),
       w('bint', 'بِنْت', 'girl, daughter', 'girl', 'bint'),
@@ -59,7 +62,6 @@ export const WEEKS = [
       w('zaytun', 'زَيْتُون', 'olives', 'olives', 'zaytūn'),
       w('thawb', 'ثَوْب', 'a garment, a thobe', 'thobe', 'thawb'),
       w('tut', 'تُوت', 'berries', 'berries', 'tūt'),
-      w('yad', 'يَد', 'hand', 'hand', 'yad'),
       w('bayrut', 'بَيْرُوت', 'Beirut', 'cedar', 'bayrūt'),
     ],
     phrases: [

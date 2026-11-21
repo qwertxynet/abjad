@@ -10,7 +10,7 @@ import { WEEKS, weekByN, COUNTRIES } from './data/weeks.js';
 import { LETTERS, byChar, forms, syllables } from './data/letters.js';
 import { shuffle, sample, strip, splitLetters, baseLetter } from './lib.js';
 
-export const QUIZ_VERSION = 2;
+export const QUIZ_VERSION = 3; // 3: ي moved to Week 1
 
 // Letters beginners mix up by ear; the "same vowel, different letter" question prefers these as distractors.
 const CONFUSE = {

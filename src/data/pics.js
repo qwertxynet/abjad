@@ -37,6 +37,8 @@ export const PICS = {
   olives: '<ellipse class="g" cx="24" cy="38" rx="7" ry="10" transform="rotate(-20 24 38)"/><ellipse class="g" cx="40" cy="40" rx="7" ry="10" transform="rotate(15 40 40)"/><path d="M14 12 Q32 18 50 12 M24 15 Q20 20 24 28 M40 15 Q44 20 40 30 M32 17 q-6 -6 -12 -4 M32 17 q6 -6 12 -4"/>',
   thobe: '<path class="b" d="M24 8 H40 L50 16 L46 26 L42 22 V58 H22 V22 L18 26 L14 16 Z"/><path d="M28 8 L32 16 L36 8 M32 16 V30"/>',
   berries: '<circle class="a" cx="24" cy="36" r="7"/><circle class="a" cx="38" cy="34" r="7"/><circle class="a" cx="31" cy="46" r="7"/><path d="M31 27 Q31 16 40 12 M31 20 Q24 14 18 16"/>',
+  world: '<circle class="b" cx="32" cy="32" r="22"/><path class="g" d="M17 22 q7 -7 13 -2 q4 6 -2 10 q-6 2 -6 9 q-7 -4 -5 -17 Z M37 30 q8 -2 12 4 q2 8 -6 14 q-4 -7 -6 -18 Z"/><path d="M10 32 H54 M32 10 Q20 32 32 54 M32 10 Q44 32 32 54"/>',
+  pray: '<path class="y" d="M30 54 Q31 40 29 30 L24 16 Q22 12 19 14 L22 30 L14 22 Q11 20 10 24 L18 42 Q22 52 30 54 Z"/><path class="y" d="M34 54 Q33 40 35 30 L40 16 Q42 12 45 14 L42 30 L50 22 Q53 20 54 24 L46 42 Q42 52 34 54 Z"/><path d="M24 8 l2 3 M32 4 v4 M40 8 l-2 3"/>',
   hand: '<path class="y" d="M22 58 V34 L16 26 Q14 22 18 21 L24 28 V12 Q24 9 27 9 Q30 9 30 12 V26 V10 Q30 7 33 7 Q36 7 36 10 V26 V13 Q36 10 39 10 Q42 10 42 13 V28 V18 Q42 15 45 15 Q48 15 48 18 V40 Q48 52 40 58 Z"/>',
   cedar: '<path class="g" d="M32 6 L44 20 H38 L50 32 H42 L56 46 H8 L22 32 H14 L26 20 H20 Z"/><path d="M32 46 V58 M26 58 H38"/>',
   flag: '<path d="M14 58 V6"/><path class="a" d="M14 8 Q24 4 32 9 Q40 14 50 9 V31 Q40 36 32 31 Q24 26 14 30 Z"/>',

@@ -32,14 +32,14 @@ export const LETTERS = [
   L('ن', 'نُون', 'nūn', 'n', 1, true, 'Like n in "noon".'),
   L('ه', 'هَاء', 'hā’', 'h', 7, true, 'Like h in "hat", even at the end of a word.'),
   L('و', 'وَاو', 'wāw', 'w / ū', 1, false, 'Like w in "wow", or a long "oo" when it is a vowel.'),
-  L('ي', 'يَاء', 'yā’', 'y / ī', 2, true, 'Like y in "yes", or a long "ee" when it is a vowel.'),
+  L('ي', 'يَاء', 'yā’', 'y / ī', 1, true, 'Like y in "yes", or a long "ee" when it is a vowel.'),
 ];
 
 // Extra letters and signs that are not among the 28.
 export const SIGNS = [
-  { id: 'harakat', char: 'بَ بُ بِ', name: 'الْحَرَكَات', nameEn: 'short vowels', week: 1, note: 'Fatha ـَ = short a, damma ـُ = short u, kasra ـِ = short i. Written above or below the letter.' },
-  { id: 'sukun', char: 'بْ', name: 'السُّكُون', nameEn: 'sukūn', week: 1, note: 'A small circle: the letter has no vowel after it (دَرْس).' },
-  { id: 'long', char: 'بَا بُو بِي', name: 'الْمَدّ', nameEn: 'long vowels', week: 2, note: 'ا, و and ي after a short vowel make it long: بَا bā, بُو bū, بِي bī.' },
+  { id: 'harakat', char: 'دَ دُ دِ', name: 'الْحَرَكَات', nameEn: 'short vowels', week: 1, note: 'Fatha ـَ = short a, damma ـُ = short u, kasra ـِ = short i. Written above or below the letter.' },
+  { id: 'sukun', char: '◌ْ', name: 'السُّكُون', nameEn: 'sukūn', week: 1, note: 'A small circle above a letter: that letter has no vowel after it, as in وَرْد.' },
+  { id: 'long', char: 'دَا دُو دِي', name: 'الْمَدّ', nameEn: 'long vowels', week: 1, note: 'ا, و and ي after a short vowel make it long: دَ da → دَا dā, دُ du → دُو dū, دِ di → دِي dī.' },
   { id: 'taa-marbuta', char: 'ة', name: 'التَّاء الْمَرْبُوطَة', nameEn: 'tā’ marbūṭa', week: 3, note: 'Comes only at the end of a word, usually feminine. It sounds like a short "a" (وَرْدَة), and like t when another word follows in the phrase.' },
   { id: 'al', char: 'الـ', name: 'أَل التَّعْرِيف', nameEn: 'al- ("the")', week: 3, note: 'Written as one with the word that follows: بَيْت a house → الْبَيْت the house.' },
   { id: 'shadda', char: 'بّ', name: 'الشَّدَّة', nameEn: 'shadda', week: 3, note: 'The letter is doubled: you hold it a little longer (حَمَّام).' },
