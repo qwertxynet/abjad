@@ -34,10 +34,10 @@
     {
      "id": "k01-2a",
      "who": "rana",
-     "ar": "أَهْلًا! اِسْمِي رَنَا.",
-     "en": "Hi! My name is Rana.",
+     "ar": "وَعَلَيْكُمُ السَّلَام!\nاِسْمِي رَنَا.",
+     "en": "And peace be upon you! (the reply) My name is Rana.",
      "x": 60,
-     "y": 5,
+     "y": 4,
      "tail": "down-right",
      "spoken": true
     },
@@ -761,6 +761,620 @@
      "x": 2,
      "y": 28,
      "tail": "down-right"
+    }
+   ]
+  }
+ ],
+ "10": [
+  {
+   "img": "10-1.webp",
+   "alt": "The phone shop. Sami answers the shop phone behind the counter as Nader and Rana come in.",
+   "bubbles": [
+    {
+     "id": "k10-1a",
+     "who": "sami",
+     "ar": "مَرْحَبًا! اِسْمِي سَامِي.",
+     "en": "Hello! My name is Sami.",
+     "clip": "s-w10-r1",
+     "x": 50,
+     "y": 6,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "10-2.webp",
+   "alt": "Rana asks Sami how old he is.",
+   "bubbles": [
+    {
+     "id": "k10-2a",
+     "who": "rana",
+     "ar": "كَمْ عُمْرُكَ؟",
+     "en": "How old are you?",
+     "x": 6,
+     "y": 10,
+     "tail": "down-right"
+    },
+    {
+     "id": "k10-2b",
+     "who": "sami",
+     "ar": "أَنَا طَالِب، وَعُمْرِي ثَمَانِيَ عَشْرَةَ سَنَةً.",
+     "en": "I am a student, and I am eighteen.",
+     "clip": "s-w10-r2",
+     "x": 40,
+     "y": 22,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "10-3.webp",
+   "alt": "Sami holds out a card with his phone number on it.",
+   "bubbles": [
+    {
+     "id": "k10-3a",
+     "who": "sami",
+     "ar": "رَقْمُ هَاتِفِي ٦١٩ ٥٥٥ ٠١٤٧.",
+     "en": "My phone number is 619 555 0147.",
+     "clip": "s-w10-r3",
+     "x": 6,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "10-4.webp",
+   "alt": "Sami puts an arm up next to Nader: his friend, also a student, and twenty years old.",
+   "bubbles": [
+    {
+     "id": "k10-4a",
+     "who": "sami",
+     "ar": "نَادِر صَدِيقِي، وَهُوَ طَالِب أَيْضًا.",
+     "en": "Nader is my friend, and he is a student too.",
+     "clip": "s-w10-r4",
+     "gloss": [
+      [
+       "أَيْضًا",
+       "also, too"
+      ]
+     ],
+     "x": 3,
+     "y": 5,
+     "tail": "down-right"
+    },
+    {
+     "id": "k10-4b",
+     "who": "sami",
+     "ar": "عُمْرُ نَادِر عِشْرُونَ سَنَةً.",
+     "en": "Nader is twenty.",
+     "clip": "s-w10-r5",
+     "x": 58,
+     "y": 18,
+     "tail": "down-left"
+    }
+   ]
+  }
+ ],
+ "11": [
+  {
+   "img": "11-1.webp",
+   "alt": "A sunny Monday in the park. Rana points up at the sun.",
+   "bubbles": [
+    {
+     "id": "k11-1a",
+     "who": "rana",
+     "ar": "الْيَوْمُ الِاثْنَيْن، وَالْجَوُّ مُشْمِس.",
+     "en": "Today is Monday, and the weather is sunny.",
+     "clip": "s-w11-r1",
+     "x": 34,
+     "y": 6,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "11-2.webp",
+   "alt": "A split picture: on the right, Nader sweats in the summer sun; on the left, he shelters under an umbrella in the winter rain.",
+   "bubbles": [
+    {
+     "id": "k11-2a",
+     "who": "caption",
+     "ar": "فِي الصَّيْف الْجَوُّ حَارّ.",
+     "en": "In summer the weather is hot.",
+     "clip": "s-w11-r2",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k11-2b",
+     "who": "caption",
+     "ar": "وَفِي الشِّتَاء الْجَوُّ بَارِد وَمُمْطِر.",
+     "en": "And in winter the weather is cold and rainy.",
+     "clip": "s-w11-r3",
+     "x": 3,
+     "y": 4
+    }
+   ]
+  },
+  {
+   "img": "11-3.webp",
+   "alt": "Spring: the trees are full of pink blossom. Rana spreads her arms.",
+   "bubbles": [
+    {
+     "id": "k11-3a",
+     "who": "rana",
+     "ar": "الرَّبِيعُ جَمِيل جِدًّا.",
+     "en": "Spring is very beautiful.",
+     "clip": "s-w11-r4",
+     "gloss": [
+      [
+       "جِدًّا",
+       "very"
+      ]
+     ],
+     "x": 6,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "11-4.webp",
+   "alt": "Sunset in the park. Nader and Rana wave goodbye until tomorrow.",
+   "bubbles": [
+    {
+     "id": "k11-4a",
+     "who": "nader",
+     "ar": "غَدًا الثُّلَاثَاء.",
+     "en": "Tomorrow is Tuesday.",
+     "clip": "s-w11-r5",
+     "x": 58,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  }
+ ],
+ "12": [
+  {
+   "img": "12-1.webp",
+   "alt": "The clothes shop: a rack of colourful clothes, and a little room behind a curtain with a table and a chair.",
+   "bubbles": [
+    {
+     "id": "k12-1a",
+     "who": "caption",
+     "ar": "فِي الْغُرْفَة طَاوِلَة وَكُرْسِيّ.",
+     "en": "In the room there is a table and a chair.",
+     "clip": "s-w12-r1",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "img": "12-2.webp",
+   "alt": "A white table and a black chair.",
+   "bubbles": [
+    {
+     "id": "k12-2a",
+     "who": "caption",
+     "ar": "الطَّاوِلَةُ بَيْضَاء، وَالْكُرْسِيُّ أَسْوَد.",
+     "en": "The table is white, and the chair is black.",
+     "clip": "s-w12-r2",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "img": "12-3.webp",
+   "alt": "On the white table: a red book and a blue notebook. Nader points at them.",
+   "bubbles": [
+    {
+     "id": "k12-3a",
+     "who": "nader",
+     "ar": "عَلَى الطَّاوِلَة كِتَابٌ أَحْمَر وَدَفْتَرٌ أَزْرَق.",
+     "en": "On the table there is a red book and a blue notebook.",
+     "clip": "s-w12-r3",
+     "x": 18,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "12-4.webp",
+   "alt": "Nader tries on a green shirt; Rana holds up a yellow hat.",
+   "bubbles": [
+    {
+     "id": "k12-4a",
+     "who": "rana",
+     "ar": "هَذَا قَمِيصٌ أَخْضَر، وَهَذِهِ قُبَّعَةٌ صَفْرَاء.",
+     "en": "This is a green shirt, and this is a yellow hat.",
+     "clip": "s-w12-r4",
+     "x": 30,
+     "y": 4,
+     "tail": "down-left"
+    }
+   ]
+  }
+ ],
+ "13": [
+  {
+   "img": "13-1.webp",
+   "alt": "Grandma’s house, with a carved wooden balcony and a cat on the step. Layla waves to Nader and Rana.",
+   "bubbles": [
+    {
+     "id": "k13-1a",
+     "who": "layla",
+     "ar": "اِسْمِي لَيْلَى.",
+     "en": "My name is Layla.",
+     "clip": "s-w13-r1",
+     "x": 62,
+     "y": 18,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "13-2.webp",
+   "alt": "Layla points to a framed photo of her parents, Ahmad and Salma.",
+   "bubbles": [
+    {
+     "id": "k13-2a",
+     "who": "layla",
+     "ar": "أَبِي اِسْمُهُ أَحْمَد، وَأُمِّي اِسْمُهَا سَلْمَى.",
+     "en": "My father’s name is Ahmad, and my mother’s name is Salma.",
+     "clip": "s-w13-r2",
+     "x": 44,
+     "y": 46,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "13-3.webp",
+   "alt": "Layla’s younger brother and two little sisters come running in, waving.",
+   "bubbles": [
+    {
+     "id": "k13-3a",
+     "who": "layla",
+     "ar": "عِنْدِي أَخٌ وَاحِد وَأُخْتَان.",
+     "en": "I have one brother and two sisters.",
+     "clip": "s-w13-r3",
+     "gloss": [
+      [
+       "أُخْتَان",
+       "two sisters"
+      ]
+     ],
+     "x": 54,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "13-4.webp",
+   "alt": "Grandma, in a white hijab and glasses, comes in smiling and waving.",
+   "bubbles": [
+    {
+     "id": "k13-4a",
+     "who": "layla",
+     "ar": "لَيْسَ عِنْدِي جَدّ، وَلَكِنْ عِنْدِي جَدَّة.",
+     "en": "I don’t have a grandfather, but I have a grandmother.",
+     "clip": "s-w13-r4",
+     "gloss": [
+      [
+       "وَلَكِنْ",
+       "but"
+      ]
+     ],
+     "x": 46,
+     "y": 4,
+     "tail": "down-right"
+    },
+    {
+     "id": "k13-4b",
+     "who": "caption",
+     "ar": "جَدَّتِي مِنَ الْعِرَاق.",
+     "en": "My grandmother is from Iraq.",
+     "clip": "s-w13-r5",
+     "x": 3,
+     "y": 20
+    }
+   ]
+  }
+ ],
+ "14": [
+  {
+   "img": "14-1.webp",
+   "alt": "The falafel restaurant. Rana, in an apron, takes Nader’s order.",
+   "bubbles": [
+    {
+     "id": "k14-1a",
+     "who": "rana",
+     "ar": "مَرْحَبًا! مَاذَا تُحِبّ؟",
+     "en": "Hello! What do you like?",
+     "clip": "s-w14-r1",
+     "x": 58,
+     "y": 10,
+     "tail": "down-right"
+    },
+    {
+     "id": "k14-1b",
+     "who": "nader",
+     "ar": "أُحِبُّ الْحُمُّص وَالْفَلَافِل.",
+     "en": "I like hummus and falafel.",
+     "clip": "s-w14-r2",
+     "x": 4,
+     "y": 26,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "14-2.webp",
+   "alt": "Rana offers a plate of fish. Nader holds up a hand: no thanks.",
+   "bubbles": [
+    {
+     "id": "k14-2a",
+     "who": "rana",
+     "ar": "هَلْ تُحِبُّ السَّمَك؟",
+     "en": "Do you like fish?",
+     "clip": "s-w14-r3",
+     "x": 60,
+     "y": 10,
+     "tail": "down-right"
+    },
+    {
+     "id": "k14-2b",
+     "who": "nader",
+     "ar": "لَا، لَا أُحِبُّ السَّمَك.",
+     "en": "No, I don’t like fish.",
+     "clip": "s-w14-r4",
+     "x": 4,
+     "y": 24,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "14-3.webp",
+   "alt": "Rana asks what Nader will drink. He asks for tea.",
+   "bubbles": [
+    {
+     "id": "k14-3a",
+     "who": "rana",
+     "ar": "وَمَاذَا تَشْرَب؟",
+     "en": "And what will you drink?",
+     "gloss": [
+      [
+       "تَشْرَب",
+       "you drink"
+      ]
+     ],
+     "x": 60,
+     "y": 10,
+     "tail": "down-right"
+    },
+    {
+     "id": "k14-3b",
+     "who": "nader",
+     "ar": "شَاي، مِنْ فَضْلِك.",
+     "en": "Tea, please.",
+     "gloss": [
+      [
+       "مِنْ فَضْلِك",
+       "please"
+      ]
+     ],
+     "x": 6,
+     "y": 24,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "14-4.webp",
+   "alt": "Rana serves hummus, falafel and tea. Nader is delighted.",
+   "bubbles": [
+    {
+     "id": "k14-4a",
+     "who": "rana",
+     "ar": "تَفَضَّلْ! صَحْتَيْن!",
+     "en": "Here you are! Bon appétit!",
+     "clip": "s-w14-r6",
+     "x": 54,
+     "y": 10,
+     "tail": "down-right"
+    }
+   ]
+  }
+ ],
+ "15": [
+  {
+   "img": "15-1.webp",
+   "alt": "Seven o’clock on the tower clock. Salma has her morning coffee at a café table in the square.",
+   "bubbles": [
+    {
+     "id": "k15-1a",
+     "who": "salma",
+     "ar": "أَنَا سَلْمَى.",
+     "en": "I am Salma.",
+     "clip": "s-w15-r1",
+     "x": 72,
+     "y": 8,
+     "tail": "down-left"
+    },
+    {
+     "id": "k15-1b",
+     "who": "salma",
+     "ar": "أَسْتَيْقِظُ السَّاعَةَ السَّابِعَة وَأَشْرَبُ الْقَهْوَة.",
+     "en": "I wake up at seven and drink coffee.",
+     "clip": "s-w15-r2",
+     "x": 34,
+     "y": 22,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "15-2.webp",
+   "alt": "Nine o’clock. Salma hurries with her bag towards the university gate.",
+   "bubbles": [
+    {
+     "id": "k15-2a",
+     "who": "salma",
+     "ar": "أَذْهَبُ إِلَى الْجَامِعَة السَّاعَةَ التَّاسِعَة.",
+     "en": "I go to the university at nine.",
+     "clip": "s-w15-r3",
+     "gloss": [
+      [
+       "الْجَامِعَة",
+       "the university"
+      ]
+     ],
+     "x": 34,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "15-3.webp",
+   "alt": "Two pictures: on the right Salma studies an Arabic book at ten; on the left she works at an office computer at two.",
+   "bubbles": [
+    {
+     "id": "k15-3a",
+     "who": "caption",
+     "ar": "أَدْرُسُ الْعَرَبِيَّة، ثُمَّ أَعْمَلُ فِي مَكْتَب.",
+     "en": "I study Arabic, then I work in an office.",
+     "clip": "s-w15-r4",
+     "gloss": [
+      [
+       "الْعَرَبِيَّة",
+       "Arabic (the language)"
+      ],
+      [
+       "ثُمَّ",
+       "then"
+      ]
+     ],
+     "x": 97,
+     "y": 76,
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "img": "15-4.webp",
+   "alt": "Two pictures: on the right Salma walks home at six as the sun sets; on the left her window is dark at eleven: she is asleep.",
+   "bubbles": [
+    {
+     "id": "k15-4a",
+     "who": "caption",
+     "ar": "أَرْجِعُ إِلَى الْبَيْت السَّاعَةَ السَّادِسَة.",
+     "en": "I return home at six.",
+     "clip": "s-w15-r5",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k15-4b",
+     "who": "caption",
+     "ar": "وَأَنَامُ السَّاعَةَ الْحَادِيَةَ عَشْرَة.",
+     "en": "And I sleep at eleven.",
+     "clip": "s-w15-r6",
+     "x": 2,
+     "y": 82
+    }
+   ]
+  }
+ ],
+ "16": [
+  {
+   "img": "16-1.webp",
+   "alt": "The travel agency, with a map of the Mediterranean and a poster of San Diego. Karim introduces himself from behind his desk.",
+   "bubbles": [
+    {
+     "id": "k16-1a",
+     "who": "karim",
+     "ar": "اِسْمِي كَرِيم.",
+     "en": "My name is Karim.",
+     "clip": "s-w16-r1",
+     "x": 64,
+     "y": 50,
+     "tail": "down-left"
+    },
+    {
+     "id": "k16-1b",
+     "who": "karim",
+     "ar": "أَنَا مِنَ الْمَغْرِب، أَنَا مَغْرِبِيّ.",
+     "en": "I am from Morocco, I am Moroccan.",
+     "clip": "s-w16-r2",
+     "x": 4,
+     "y": 40,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "16-2.webp",
+   "alt": "Karim points up at the poster of San Diego: sun, sea and a palm tree.",
+   "bubbles": [
+    {
+     "id": "k16-2a",
+     "who": "karim",
+     "ar": "أَسْكُنُ فِي سَان دِييغُو.",
+     "en": "I live in San Diego.",
+     "clip": "s-w16-r3",
+     "x": 44,
+     "y": 54,
+     "tail": "down-left"
+    }
+   ]
+  },
+  {
+   "img": "16-3.webp",
+   "alt": "Dina comes in and waves. Karim introduces his friend.",
+   "bubbles": [
+    {
+     "id": "k16-3a",
+     "who": "karim",
+     "ar": "صَدِيقَتِي دِينَا مِنْ لُبْنَان، هِيَ لُبْنَانِيَّة.",
+     "en": "My friend Dina is from Lebanon; she is Lebanese.",
+     "clip": "s-w16-r4",
+     "gloss": [
+      [
+       "صَدِيقَتِي",
+       "my (female) friend"
+      ]
+     ],
+     "x": 40,
+     "y": 48,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "16-4.webp",
+   "alt": "A big map: a pin on Rabat in Morocco and a pin on Beirut in Lebanon. Dina holds her ticket to Beirut.",
+   "bubbles": [
+    {
+     "id": "k16-4a",
+     "who": "karim",
+     "ar": "عَاصِمَةُ لُبْنَان بَيْرُوت، وَعَاصِمَةُ الْمَغْرِب الرِّبَاط.",
+     "en": "The capital of Lebanon is Beirut, and the capital of Morocco is Rabat.",
+     "clip": "s-w16-r5",
+     "x": 97,
+     "y": 74,
+     "align": "right"
     }
    ]
   }

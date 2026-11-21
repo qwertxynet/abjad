@@ -7,7 +7,7 @@ import { Ar } from './bits.jsx';
 export const COMICS = data;
 /** The recording a bubble plays: a clip already in the lesson, or the bubble's own. */
 export const bubbleClip = (b) => b.clip || b.id;
-const WHO = { nader: 'Nader', rana: 'Rana', caption: '' };
+const WHO = { nader: 'Nader', rana: 'Rana', caption: '', sami: 'Sami', dina: 'Dina', layla: 'Layla', salma: 'Salma', karim: 'Karim', owner: 'The café owner', baker: 'The baker', grandma: 'Grandma' };
 
 /**
  * One panel at a time, read right to left like an Arabic book: the next panel is to the LEFT
@@ -71,14 +71,26 @@ export default function Comic({ n, onDone }) {
           return (
             <button
               key={b.id}
-              className={`bubble ${b.who}${b.tail ? ' tail-' + b.tail : ''}${open[b.id] ? ' open' : ''}${speaking === b.id ? ' speaking' : ''}`}
+              className={`bubble ${b.who}${b.tail ? ' tail-' + b.tail : ''}${b.gloss ? ' has-gloss' : ''}${open[b.id] ? ' open' : ''}${speaking === b.id ? ' speaking' : ''}`}
               style={pos}
               onClick={() => tap(b)}
               aria-expanded={!!open[b.id]}
               aria-label={`${WHO[b.who] ? WHO[b.who] + ' says: ' : ''}${b.ar}. Tap for the meaning.`}
             >
+              {b.gloss && !open[b.id] && <span className="gloss-dot" aria-hidden="true" />}
               <Ar className="bubble-ar">{b.ar}</Ar>
               {open[b.id] && <span className="bubble-en">{b.en}</span>}
+              {open[b.id] && b.gloss && (
+                <span className="bubble-gloss">
+                  New:{' '}
+                  {b.gloss.map(([w, m], k) => (
+                    <span key={k}>
+                      {k > 0 && ' · '}
+                      <Ar>{w}</Ar> = {m}
+                    </span>
+                  ))}
+                </span>
+              )}
             </button>
           );
         })}

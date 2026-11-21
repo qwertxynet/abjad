@@ -59,7 +59,7 @@ export const PANELS = [
     ].join(''),
     alt: 'Rana opens the door and waves; Nader smiles.',
     bubbles: [
-      { who: 'rana', ar: 'أَهْلًا! اِسْمِي رَنَا.', en: 'Hi! My name is Rana.', x: 60, y: 5, tail: 'down-right', spoken: true },
+      { who: 'rana', ar: 'وَعَلَيْكُمُ السَّلَام!\nاِسْمِي رَنَا.', en: 'And peace be upon you! (the reply) My name is Rana.', x: 60, y: 4, tail: 'down-right', spoken: true },
       { who: 'nader', ar: 'اِسْمِي نَادِر.', en: 'My name is Nader.', x: 4, y: 16, tail: 'down-right', spoken: true },
     ],
   },

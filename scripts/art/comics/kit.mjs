@@ -6,7 +6,7 @@ export const ell = (x, y, rx, ry) => `M${x - rx} ${y} a${rx} ${ry} 0 1 0 ${2 * r
 export const both = (cls, d, w = 1.4) => W(cls, d) + I(d, w);
 
 /** Where a figure's hand ends up, for putting props in it. side: 1 screen right, -1 screen left. */
-const HAND = { rest: [24.4, -68.6], wave: [35.3, -147.4], point: [56.4, -109.6], hold: [5.8, -84.7], hip: [17, -77.4], open: [43, -90.4], up: [25.7, -155.4] };
+const HAND = { rest: [24.4, -68.6], wave: [35.3, -147.4], point: [56.4, -109.6], hold: [5.8, -84.7], hip: [17, -77.4], open: [43, -90.4], up: [25.7, -155.4], ear: [10.7, -138.5] };
 export const handAt = (x, y, s, pose, side = 1) => [x + s * side * HAND[pose][0], y + s * HAND[pose][1]];
 
 export const sky = (h = 60, cls = 'w-sky') => W(cls, `M0 0 H320 V${h} H0 Z`);
@@ -101,3 +101,19 @@ export const shelf = (x, y, w, colors = ['w-roof', 'w-door', 'w-leaf', 'w-lamp',
   }
   return out + I(`M${x} ${y} h${w}`, 2);
 };
+
+/** A clock face showing h:m. */
+export function clock(x, y, r, h, m = 0, cls = 'w-white') {
+  const a = ((h % 12) + m / 60) * (Math.PI / 6) - Math.PI / 2, b = m * (Math.PI / 30) - Math.PI / 2;
+  const ticks = Array.from({ length: 12 }, (_, k) => {
+    const t = (k * Math.PI) / 6;
+    return `M${(x + Math.cos(t) * r * 0.78).toFixed(1)} ${(y + Math.sin(t) * r * 0.78).toFixed(1)} L${(x + Math.cos(t) * r * 0.9).toFixed(1)} ${(y + Math.sin(t) * r * 0.9).toFixed(1)}`;
+  }).join(' ');
+  return both(cls, circ(x, y, r), 1.8) + I(ticks, 0.9) +
+    I(`M${x} ${y} L${(x + Math.cos(a) * r * 0.5).toFixed(1)} ${(y + Math.sin(a) * r * 0.5).toFixed(1)}`, 2.2) +
+    I(`M${x} ${y} L${(x + Math.cos(b) * r * 0.75).toFixed(1)} ${(y + Math.sin(b) * r * 0.75).toFixed(1)}`, 1.4);
+}
+/** A mobile phone, upright, centred at (x, y). */
+export const phone = (x, y, s = 1, cls = 'w-hair') => both(cls, `M${x - 5 * s} ${y + 9 * s} h${10 * s} v${-18 * s} h${-10 * s} Z`, 1.1) + W('w-sky', `M${x - 3.6 * s} ${y + 6 * s} h${7.2 * s} v${-12.5 * s} h${-7.2 * s} Z`);
+/** A framed picture. inner: a drawing placed inside. */
+export const frame = (x, y, w, h, inner = '', cls = 'w-wood', bg = 'w-sky') => both(cls, `M${x} ${y} h${w} v${h} h${-w} Z`, 1.8) + W(bg, `M${x + 5} ${y + 5} h${w - 10} v${h - 10} h${-w + 10} Z`) + inner;
