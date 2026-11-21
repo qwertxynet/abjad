@@ -139,6 +139,26 @@ export function play(id) {
   current.play().catch(() => {});
   return true;
 }
+/** Plays a list of clips one after another (skipping any not recorded yet). onEach(i) fires as clip i starts; onEnd when all are done. */
+export function playList(ids, { onEach, onEnd } = {}) {
+  stop();
+  let k = 0;
+  const next = () => {
+    while (k < ids.length && !available.has(ids[k])) k++;
+    if (k >= ids.length) return onEnd?.();
+    const i = k++;
+    onEach?.(i);
+    const a = new Audio(`./audio/${ids[i]}.mp3`);
+    current = a;
+    a.addEventListener('ended', () => current === a && setTimeout(next, 350), { once: true });
+    a.play().catch(() => onEnd?.());
+  };
+  next();
+  return () => {
+    k = ids.length;
+    stop();
+  };
+}
 /** Plays one syllable of a drill clip (one MP3, played from its start to its end time). */
 export function playSegment(id, i) {
   const seg = segments[id]?.[i];

@@ -243,7 +243,7 @@ export const WEEKS = [
       s('w08-p4', 'أَنْتَ طَالِب وَأَنْتِ طَالِبَة.', 'You (m) are a student and you (f) are a student.'),
     ],
     sentences: [
-      s('w08-s1', 'أَنَا اسْمِي رَنَا، أَنَا مِنْ بَيْرُوت.', 'My name is Rana, I am from Beirut.'),
+      s('w08-s1', 'أَنَا اسْمِي رَنَا، أَنَا مِنْ مِصْر.', 'My name is Rana, I am from Egypt.'),
       s('w08-s2', 'مَعَ السَّلَامَة!', 'Goodbye!'),
     ],
     spoken: [],

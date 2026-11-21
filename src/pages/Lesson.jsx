@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import { weekByN, DATES, COUNTRIES, nextLesson } from '../data/weeks.js';
 import { byChar, forms, syllables, SIGNS, knownBy } from '../data/letters.js';
 import { useStore, markStep, go, href, splitLetters, strip, shuffle, isOpen, useAr } from '../lib.js';
-import { Ar, Pic, Say, Steps, letterClip, Mixed, SyllableRow } from '../components/bits.jsx';
+import { Ar, Pic, Say, Steps, stepOpen, letterClip, Mixed, SyllableRow } from '../components/bits.jsx';
+import Comic, { COMICS } from '../components/Comic.jsx';
 import Trace, { TRACE_TIPS } from '../components/Trace.jsx';
 import Games from '../components/Games.jsx';
 import Quiz from '../components/Quiz.jsx';
@@ -26,6 +27,7 @@ const P2 = [
   { id: 'quiz', label: 'Quiz' },
 ];
 const REVIEW = [{ id: 'quiz', label: 'Review quiz' }];
+const STORY = { id: 'story', label: 'Story', optional: true };
 
 export default function Lesson({ n, step }) {
   const s = useStore();
@@ -38,12 +40,14 @@ export default function Lesson({ n, step }) {
         <p>Pass the quiz of the week before to open it, or paste a code on the <a href={href('codes')}>My codes</a> page.</p>
       </div>
     );
-  const steps = wk.review ? REVIEW : wk.part === 1 ? P1 : P2;
+  const base = wk.review ? REVIEW : wk.part === 1 ? P1 : P2;
+  // The Story step (the week's comic) sits just before the quiz, when the week has one. It is optional.
+  const steps = COMICS[n] ? [...base.slice(0, -1), STORY, base[base.length - 1]] : base;
   const done = s.steps?.[n] || {};
-  const firstOpen = steps.find((x, i) => !done[x.id] && (i === 0 || done[steps[i - 1].id]))?.id || steps[steps.length - 1].id;
+  const firstOpen = steps.find((x, i) => !x.optional && !done[x.id] && stepOpen(steps, done, i))?.id || steps[steps.length - 1].id;
   const cur = steps.find((x) => x.id === step) ? step : firstOpen;
   const idx = steps.findIndex((x) => x.id === cur);
-  const curOpen = idx === 0 || done[steps[idx - 1].id];
+  const curOpen = stepOpen(steps, done, idx);
   const complete = () => {
     markStep(n, cur);
     const nx = steps[idx + 1];
@@ -76,6 +80,7 @@ export default function Lesson({ n, step }) {
           {cur === 'pattern' && <PatternStep wk={wk} onDone={complete} />}
           {cur === 'write' && <WriteStep wk={wk} onDone={complete} />}
           {cur === 'play' && <Games wk={wk} onDone={complete} />}
+          {cur === 'story' && <Comic n={n} onDone={complete} />}
           {cur === 'quiz' && <Quiz wk={wk} next={nextLesson(n)} />}
         </section>
       )}

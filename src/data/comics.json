@@ -1,0 +1,768 @@
+{
+ "1": [
+  {
+   "img": "1-1.webp",
+   "alt": "Nader waves at the door of Rana’s stone house. Bougainvillea climbs the wall.",
+   "bubbles": [
+    {
+     "id": "k01-1a",
+     "who": "caption",
+     "ar": "زَارَ نَادِر دَارَ رَنَا.",
+     "en": "Nader visited Rana’s house.",
+     "clip": "s-w01-s1",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k01-1b",
+     "who": "nader",
+     "ar": "السَّلَامُ عَلَيْكُم!",
+     "en": "Peace be upon you! (Hello!)",
+     "clip": "s-w01-o3",
+     "spoken": true,
+     "x": 22,
+     "y": 11,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "1-2.webp",
+   "alt": "Rana opens the door and waves; Nader smiles.",
+   "bubbles": [
+    {
+     "id": "k01-2a",
+     "who": "rana",
+     "ar": "أَهْلًا! اِسْمِي رَنَا.",
+     "en": "Hi! My name is Rana.",
+     "x": 60,
+     "y": 5,
+     "tail": "down-right",
+     "spoken": true
+    },
+    {
+     "id": "k01-2b",
+     "who": "nader",
+     "ar": "اِسْمِي نَادِر.",
+     "en": "My name is Nader.",
+     "x": 4,
+     "y": 16,
+     "tail": "down-right",
+     "spoken": true
+    }
+   ]
+  },
+  {
+   "img": "1-3.webp",
+   "alt": "Rana points to her pot of red roses. Nader is amazed.",
+   "bubbles": [
+    {
+     "id": "k01-3a",
+     "who": "nader",
+     "ar": "وَرْد!",
+     "en": "Roses!",
+     "clip": "w-ward",
+     "x": 74,
+     "y": 5,
+     "tail": "down-right"
+    },
+    {
+     "id": "k01-3b",
+     "who": "rana",
+     "ar": "وَرْدُ رَنَا.",
+     "en": "Rana’s roses.",
+     "clip": "s-w01-p3",
+     "x": 4,
+     "y": 9,
+     "tail": "down-left"
+    }
+   ]
+  },
+  {
+   "img": "1-4.webp",
+   "alt": "Evening. Rana and Nader play backgammon by a candle and a lantern. It is Nader’s turn.",
+   "bubbles": [
+    {
+     "id": "k01-4a",
+     "who": "caption",
+     "ar": "نُور وَنَار",
+     "en": "Light and fire",
+     "clip": "s-w01-p2",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k01-4b",
+     "who": "rana",
+     "ar": "دَوْرُ نَادِر!",
+     "en": "Nader’s turn!",
+     "clip": "s-w01-p4",
+     "x": 4,
+     "y": 16,
+     "tail": "down-left"
+    }
+   ]
+  }
+ ],
+ "2": [
+  {
+   "img": "2-1.webp",
+   "alt": "Rana stands in her open garden gate, under fig and olive trees, and greets Nader.",
+   "bubbles": [
+    {
+     "id": "k02-1a",
+     "who": "caption",
+     "ar": "بَابُ بَيْتِ رَنَا",
+     "en": "The door of Rana’s house",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k02-1b",
+     "who": "rana",
+     "ar": "كَيْفَ حَالُك؟",
+     "en": "How are you?",
+     "clip": "s-w02-o2",
+     "spoken": true,
+     "x": 57,
+     "y": 21,
+     "tail": "down-left"
+    },
+    {
+     "id": "k02-1c",
+     "who": "nader",
+     "ar": "بِخَيْر، الْحَمْدُ لِلّٰه.",
+     "en": "Fine, thank God.",
+     "clip": "s-w02-o3",
+     "spoken": true,
+     "x": 4,
+     "y": 16,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "2-2.webp",
+   "alt": "In the garden. Nader says he is from Beirut; Rana shows him her photo of Beirut’s sea and the Pigeon Rocks.",
+   "bubbles": [
+    {
+     "id": "k02-2a",
+     "who": "caption",
+     "ar": "زَارَتْ رَنَا بَيْرُوت.",
+     "en": "Rana visited Beirut.",
+     "clip": "s-w02-s1",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k02-2b",
+     "who": "nader",
+     "ar": "أَنَا مِنْ بَيْرُوت.",
+     "en": "I am from Beirut.",
+     "spoken": true,
+     "x": 58,
+     "y": 17,
+     "tail": "down-right"
+    },
+    {
+     "id": "k02-2c",
+     "who": "rana",
+     "ar": "بَيْرُوت!",
+     "en": "Beirut!",
+     "x": 10,
+     "y": 22,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "2-3.webp",
+   "alt": "Under the fig and olive trees. Nader points at the fruit; Rana holds a bowl of berries.",
+   "bubbles": [
+    {
+     "id": "k02-3a",
+     "who": "nader",
+     "ar": "تِين وَزَيْتُون!",
+     "en": "Figs and olives!",
+     "clip": "s-w02-p3",
+     "x": 62,
+     "y": 8,
+     "tail": "down-right"
+    },
+    {
+     "id": "k02-3b",
+     "who": "rana",
+     "ar": "وَتُوت!",
+     "en": "And berries!",
+     "x": 8,
+     "y": 20,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "2-4.webp",
+   "alt": "Rana holds up her hands: they are purple from the berries. Nader laughs.",
+   "bubbles": [
+    {
+     "id": "k02-4a",
+     "who": "nader",
+     "ar": "يَدُ رَنَا!",
+     "en": "Rana’s hand!",
+     "x": 64,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  }
+ ],
+ "3": [
+  {
+   "img": "3-1.webp",
+   "alt": "Nader and Rana at the fruit stall. The seller smiles behind crates of lemons, bananas, oranges and apples.",
+   "bubbles": [
+    {
+     "id": "k03-1a",
+     "who": "caption",
+     "ar": "الْوَلَد نَادِر وَالْبِنْت رَنَا.",
+     "en": "The boy is Nader and the girl is Rana.",
+     "clip": "s-w03-s1",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k03-1b",
+     "who": "nader",
+     "ar": "لَيْمُون وَمَوْز، مِنْ فَضْلِك.",
+     "en": "Lemons and bananas, please.",
+     "spoken": true,
+     "x": 3,
+     "y": 9,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "3-2.webp",
+   "alt": "Rana holds up a cob of corn and looks puzzled. Nader shrugs.",
+   "bubbles": [
+    {
+     "id": "k03-2a",
+     "who": "rana",
+     "ar": "ذُرَة؟",
+     "en": "Corn?",
+     "x": 64,
+     "y": 12,
+     "tail": "down-right"
+    },
+    {
+     "id": "k03-2b",
+     "who": "nader",
+     "ar": "لَا أَعْرِف!",
+     "en": "I don’t know!",
+     "clip": "s-w03-o3",
+     "spoken": true,
+     "x": 10,
+     "y": 18,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "3-3.webp",
+   "alt": "The seller hands over a paper bag. On the counter: boxes of dates and bottles of milk.",
+   "bubbles": [
+    {
+     "id": "k03-3a",
+     "who": "rana",
+     "ar": "تَمْر وَلَبَن",
+     "en": "Dates and milk",
+     "clip": "s-w03-p3",
+     "x": 4,
+     "y": 20,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "3-4.webp",
+   "alt": "Night. Nader and Rana walk home under the moon and stars, carrying their bags.",
+   "bubbles": [
+    {
+     "id": "k03-4a",
+     "who": "caption",
+     "ar": "اللَّيْل",
+     "en": "The night",
+     "clip": "w-al-layl",
+     "x": 4,
+     "y": 4
+    }
+   ]
+  }
+ ],
+ "4": [
+  {
+   "img": "4-1.webp",
+   "alt": "Nader’s little red car is parked crookedly, one wheel on the kerb, outside the school. Nader is very proud of it.",
+   "bubbles": [
+    {
+     "id": "k04-1a",
+     "who": "caption",
+     "ar": "سَيَّارَةُ نَادِر",
+     "en": "Nader’s car",
+     "clip": "s-w04-p3",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "img": "4-2.webp",
+   "alt": "In class. Rana says she is from Egypt; Nader says he is from Beirut.",
+   "bubbles": [
+    {
+     "id": "k04-2a",
+     "who": "caption",
+     "ar": "رَنَا مِنْ مِصْر، وَنَادِر مِنْ بَيْرُوت.",
+     "en": "Rana is from Egypt, and Nader is from Beirut.",
+     "clip": "s-w04-s1",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k04-2b",
+     "who": "rana",
+     "ar": "أَنَا مِنْ مِصْر.",
+     "en": "I am from Egypt.",
+     "spoken": true,
+     "x": 66,
+     "y": 19,
+     "tail": "down-right"
+    },
+    {
+     "id": "k04-2c",
+     "who": "nader",
+     "ar": "وَأَنَا مِنْ بَيْرُوت.",
+     "en": "And I am from Beirut.",
+     "spoken": true,
+     "x": 26,
+     "y": 28,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "4-3.webp",
+   "alt": "Nader has his head down on the desk. Rana is worried. On the wall hangs a photo of the school.",
+   "bubbles": [
+    {
+     "id": "k04-3a",
+     "who": "caption",
+     "ar": "صُورَةُ الْمَدْرَسَة",
+     "en": "The picture of the school",
+     "clip": "s-w04-p1",
+     "x": 34,
+     "y": 37
+    },
+    {
+     "id": "k04-3b",
+     "who": "rana",
+     "ar": "نَادِر مَرِيض؟",
+     "en": "Is Nader sick?",
+     "clip": "s-w04-p4",
+     "x": 58,
+     "y": 12,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "4-4.webp",
+   "alt": "Nader sits up, wide awake: he is not sick, just hungry, and dreams of tea and eggs. Rana laughs.",
+   "bubbles": [
+    {
+     "id": "k04-4a",
+     "who": "nader",
+     "ar": "لَا! شَاي وَبَيْض؟",
+     "en": "No! Tea and eggs?",
+     "x": 28,
+     "y": 12,
+     "tail": "down-right"
+    }
+   ]
+  }
+ ],
+ "5": [
+  {
+   "img": "5-1.webp",
+   "alt": "Morning at the white bakery by the sea. The sun is coming up. Nader waves to Rana.",
+   "bubbles": [
+    {
+     "id": "k05-1a",
+     "who": "nader",
+     "ar": "صَبَاحُ الْخَيْر!",
+     "en": "Good morning!",
+     "x": 60,
+     "y": 7,
+     "tail": "down-right"
+    },
+    {
+     "id": "k05-1b",
+     "who": "rana",
+     "ar": "صَبَاحُ النُّور!",
+     "en": "Good morning! (the reply)",
+     "x": 6,
+     "y": 14,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "5-2.webp",
+   "alt": "Inside the bakery. The baker counts the loaves on the counter, next to bottles of milk.",
+   "bubbles": [
+    {
+     "id": "k05-2a",
+     "who": "caption",
+     "ar": "خُبْز وَحَلِيب",
+     "en": "Bread and milk",
+     "clip": "s-w05-p1",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    },
+    {
+     "id": "k05-2b",
+     "who": "baker",
+     "ar": "سِتَّة، سَبْعَة، ثَمَانِيَة، تِسْعَة، عَشَرَة",
+     "en": "six, seven, eight, nine, ten",
+     "clip": "s-w05-o1",
+     "spoken": true,
+     "x": 3,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "5-3.webp",
+   "alt": "On the beach. Rana throws her arms up at the sea. Nader holds the bag of bread. Far away, a camel is watching.",
+   "bubbles": [
+    {
+     "id": "k05-3a",
+     "who": "rana",
+     "ar": "الْبَحْرُ جَمِيل!",
+     "en": "The sea is beautiful!",
+     "clip": "s-w05-p2",
+     "x": 6,
+     "y": 8,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "5-4.webp",
+   "alt": "The camel has come over and is eating the bread right out of Nader’s hand. Rana can’t stop laughing.",
+   "bubbles": [
+    {
+     "id": "k05-4a",
+     "who": "nader",
+     "ar": "جَمَل!",
+     "en": "A camel!",
+     "clip": "w-jamal",
+     "x": 34,
+     "y": 6,
+     "tail": "down-right"
+    },
+    {
+     "id": "k05-4b",
+     "who": "rana",
+     "ar": "خُبْزُ نَادِر!",
+     "en": "Nader’s bread!",
+     "x": 2,
+     "y": 22,
+     "tail": "down-left"
+    }
+   ]
+  }
+ ],
+ "6": [
+  {
+   "img": "6-1.webp",
+   "alt": "The covered souq: stone arches, hanging lanterns and stands of red apples and oranges. Nader and Rana walk through.",
+   "bubbles": [
+    {
+     "id": "k06-1a",
+     "who": "caption",
+     "ar": "فِي السُّوق تُفَّاح وَبُرْتُقَال.",
+     "en": "In the market there are apples and oranges.",
+     "clip": "s-w06-s1",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "img": "6-2.webp",
+   "alt": "Nader introduces his friend Sami, in a yellow T-shirt, to Rana. Sami waves.",
+   "bubbles": [
+    {
+     "id": "k06-2a",
+     "who": "nader",
+     "ar": "صَدِيقِي سَامِي، مِنَ الْعِرَاق.",
+     "en": "My friend Sami, from Iraq.",
+     "x": 52,
+     "y": 7,
+     "tail": "down-right"
+    },
+    {
+     "id": "k06-2b",
+     "who": "rana",
+     "ar": "أَهْلًا!",
+     "en": "Hi!",
+     "clip": "s-w01-o2",
+     "spoken": true,
+     "x": 3,
+     "y": 19,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "6-3.webp",
+   "alt": "At the juice stall. Sami offers apple juice; Rana already has a glass.",
+   "bubbles": [
+    {
+     "id": "k06-3a",
+     "who": "sami",
+     "ar": "عَصِيرُ تُفَّاح؟",
+     "en": "Apple juice?",
+     "x": 60,
+     "y": 14,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "6-4.webp",
+   "alt": "Night over the souq. A big full moon rises above the arches; Rana points up at it.",
+   "bubbles": [
+    {
+     "id": "k06-4a",
+     "who": "rana",
+     "ar": "الْقَمَرُ جَمِيل.",
+     "en": "The moon is beautiful.",
+     "clip": "s-w06-p1",
+     "x": 4,
+     "y": 24,
+     "tail": "down-right"
+    }
+   ]
+  }
+ ],
+ "7": [
+  {
+   "img": "7-1.webp",
+   "alt": "In the library. Nader holds up a red book; Rana points at it: it’s hers!",
+   "bubbles": [
+    {
+     "id": "k07-1a",
+     "who": "nader",
+     "ar": "هَذَا كِتَاب.",
+     "en": "This is a book.",
+     "clip": "s-w07-p1",
+     "x": 62,
+     "y": 8,
+     "tail": "down-right"
+    },
+    {
+     "id": "k07-1b",
+     "who": "rana",
+     "ar": "هَذَا كِتَابُ رَنَا!",
+     "en": "This is Rana’s book!",
+     "x": 6,
+     "y": 16,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "7-2.webp",
+   "alt": "Next door is the doctor’s. Dina, in a white coat with a stethoscope, waves hello to Nader.",
+   "bubbles": [
+    {
+     "id": "k07-2a",
+     "who": "dina",
+     "ar": "السَّلَامُ عَلَيْكُم! كَيْفَ حَالُك؟",
+     "en": "Hello! How are you?",
+     "clip": "s-w07-s1",
+     "x": 34,
+     "y": 4,
+     "tail": "down-right"
+    },
+    {
+     "id": "k07-2b",
+     "who": "dina",
+     "ar": "اِسْمِي دِينَا.",
+     "en": "My name is Dina.",
+     "x": 66,
+     "y": 20,
+     "tail": "down-left"
+    }
+   ]
+  },
+  {
+   "img": "7-3.webp",
+   "alt": "Nader with a pile of books, and Dina the doctor.",
+   "bubbles": [
+    {
+     "id": "k07-3a",
+     "who": "caption",
+     "ar": "هُوَ طَالِب وَهِيَ طَبِيبَة.",
+     "en": "He is a student and she is a doctor.",
+     "clip": "s-w07-s2",
+     "x": 97,
+     "y": 4,
+     "align": "right"
+    }
+   ]
+  },
+  {
+   "img": "7-4.webp",
+   "alt": "Dina’s dog has run into the kitchen and knocked over a cup of coffee. Nader points; Dina stares at the puddle.",
+   "bubbles": [
+    {
+     "id": "k07-4a",
+     "who": "nader",
+     "ar": "الْكَلْبُ فِي الْمَطْبَخ!",
+     "en": "The dog is in the kitchen!",
+     "clip": "s-w07-p3",
+     "x": 44,
+     "y": 8,
+     "tail": "down-right"
+    },
+    {
+     "id": "k07-4b",
+     "who": "dina",
+     "ar": "هَذِهِ قَهْوَة؟",
+     "en": "Is this coffee?",
+     "x": 3,
+     "y": 26,
+     "tail": "down-left"
+    }
+   ]
+  }
+ ],
+ "8": [
+  {
+   "img": "8-1.webp",
+   "alt": "Evening at the café on the corner. The owner, in a red waistcoat, opens his arms in welcome under the string lights.",
+   "bubbles": [
+    {
+     "id": "k08-1a",
+     "who": "owner",
+     "ar": "أَهْلًا وَسَهْلًا!",
+     "en": "Welcome!",
+     "clip": "s-w08-p3",
+     "x": 60,
+     "y": 6,
+     "tail": "down-left"
+    },
+    {
+     "id": "k08-1b",
+     "who": "owner",
+     "ar": "مَسَاءُ الْخَيْر.",
+     "en": "Good evening.",
+     "clip": "s-w08-p2",
+     "x": 20,
+     "y": 14,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "8-2.webp",
+   "alt": "Inside. Nader and Rana sit at a table; the owner points at them, one after the other.",
+   "bubbles": [
+    {
+     "id": "k08-2a",
+     "who": "owner",
+     "ar": "أَنْتَ طَالِب وَأَنْتِ طَالِبَة؟",
+     "en": "You (m) are a student, and you (f) are a student?",
+     "x": 24,
+     "y": 7,
+     "tail": "down-right"
+    }
+   ]
+  },
+  {
+   "img": "8-3.webp",
+   "alt": "Rana introduces herself; Nader raises his hand to ask for water.",
+   "bubbles": [
+    {
+     "id": "k08-3a",
+     "who": "rana",
+     "ar": "أَنَا اسْمِي رَنَا، أَنَا مِنْ مِصْر.",
+     "en": "My name is Rana, I am from Egypt.",
+     "clip": "s-w08-s1",
+     "x": 40,
+     "y": 6,
+     "tail": "down-right"
+    },
+    {
+     "id": "k08-3b",
+     "who": "nader",
+     "ar": "مَاء، مِنْ فَضْلِك.",
+     "en": "Water, please.",
+     "x": 3,
+     "y": 22,
+     "tail": "down-left"
+    }
+   ]
+  },
+  {
+   "img": "8-4.webp",
+   "alt": "Leaving the café under the lights. Everyone waves goodbye.",
+   "bubbles": [
+    {
+     "id": "k08-4a",
+     "who": "nader",
+     "ar": "شُكْرًا!",
+     "en": "Thank you!",
+     "clip": "w-shukran",
+     "x": 36,
+     "y": 14,
+     "tail": "down-right"
+    },
+    {
+     "id": "k08-4b",
+     "who": "owner",
+     "ar": "عَفْوًا!",
+     "en": "You’re welcome!",
+     "clip": "w-afwan",
+     "x": 74,
+     "y": 22,
+     "tail": "down-left"
+    },
+    {
+     "id": "k08-4c",
+     "who": "rana",
+     "ar": "مَعَ السَّلَامَة!",
+     "en": "Goodbye!",
+     "clip": "s-w08-s2",
+     "x": 2,
+     "y": 28,
+     "tail": "down-right"
+    }
+   ]
+  }
+ ]
+}

@@ -48,11 +48,18 @@ export function Say({ id, label = 'Listen' }) {
 
 export const letterClip = (c, kind) => `${kind}-${c.codePointAt(0).toString(16)}`;
 
+/** A step opens once the last required step before it is done (optional steps, like Story, never block the next one). */
+export function stepOpen(steps, done, i) {
+  let j = i - 1;
+  while (j >= 0 && steps[j].optional) j--;
+  return j < 0 || !!done[steps[j].id];
+}
+
 export function Steps({ steps, current, done, onPick }) {
   return (
     <ol className="steps" aria-label="Lesson steps">
       {steps.map((s, i) => {
-        const open = i === 0 || done[steps[i - 1].id];
+        const open = stepOpen(steps, done, i);
         return (
           <li key={s.id}>
             <button

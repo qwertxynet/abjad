@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { checkCode, checkPassword, makeUnlock, useAudioSet, useAr } from '../lib.js';
 import { LESSON_ORDER } from '../data/weeks.js';
-import { CLIPS } from './clips.js';
+import { CLIPS, VOICES } from './clips.js';
 import { CodeBox } from '../components/Quiz.jsx';
 import { encodeWav, makeZip, idb, readWav } from './audio-tools.js';
 import { findSegments, expectedSyllables, isSyllableClip } from './segments.js';
@@ -152,6 +152,7 @@ function Studio() {
   const [rec, setRec] = useState(null); // id being recorded
   const [group, setGroup] = useState(CLIPS[0].group);
   const [filter, setFilter] = useState('todo');
+  const [voice, setVoice] = useState('all');
   const media = useRef(null);
   const ar = useAr();
 
@@ -224,7 +225,9 @@ function Studio() {
   };
 
   const groups = [...new Set(CLIPS.map((c) => c.group))];
-  const list = CLIPS.filter((c) => c.group === group).filter((c) => (filter === 'all' ? true : filter === 'todo' ? !takes[c.id] && !published.has(c.id) : !!takes[c.id]));
+  const voices = [...new Set(CLIPS.map((c) => c.who).filter(Boolean))];
+  // A voice picks that character's comic lines from every week, so a guest reader can record all their lines at once.
+  const list = CLIPS.filter((c) => (voice === 'all' ? c.group === group : c.who === voice)).filter((c) => (filter === 'all' ? true : filter === 'todo' ? !takes[c.id] && !published.has(c.id) : !!takes[c.id]));
   const total = CLIPS.length;
   const doneN = CLIPS.filter((c) => takes[c.id] || published.has(c.id)).length;
 
@@ -245,7 +248,7 @@ function Studio() {
         </button>
       </p>
       <div className="row wrap">
-        <select value={group} onChange={(e) => setGroup(e.target.value)} aria-label="Group">
+        <select value={group} onChange={(e) => setGroup(e.target.value)} aria-label="Group" disabled={voice !== 'all'}>
           {groups.map((g) => (
             <option key={g}>{g}</option>
           ))}
@@ -255,12 +258,23 @@ function Studio() {
           <option value="done">Recorded here</option>
           <option value="all">All</option>
         </select>
+        {voices.length > 0 && (
+          <select value={voice} onChange={(e) => setVoice(e.target.value)} aria-label="Voice">
+            <option value="all">Every voice (by group)</option>
+            {voices.map((v) => (
+              <option key={v} value={v}>
+                Comic lines: {VOICES[v] || v}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
       <ul className="clip-list">
         {list.map((c) => (
           <li key={c.id} className={takes[c.id] ? 'has' : published.has(c.id) ? 'pub' : ''}>
             <span className="clip-ar" lang="ar">{ar(c.ar)}</span>
             <span className="clip-en">
+              {c.who && <b className="clip-who">{VOICES[c.who] || c.who}: </b>}
               {c.en} <code>{c.id}</code>
               {published.has(c.id) && <em> · published</em>}
               {isSyllableClip(c.id) && !takes[c.id] && <span className="clip-tip"> Pause about half a second between syllables.</span>}
