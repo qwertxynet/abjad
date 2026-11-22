@@ -36,7 +36,7 @@ export async function sheet(week, chars = null) {
   o.fillRect(0, 0, out.width, out.height);
   o.fillStyle = '#2A2118';
   o.font = 'bold 24px Georgia';
-  o.fillText(`Week ${week} · stroke order, one stroke per picture · green = written · red = this stroke · grey dashes = joining line (not traced)`, 12, 34);
+  o.fillText(`Week ${week} · stroke order, one stroke per picture · green = written · red = this stroke`, 12, 34);
   blocks.forEach((b, bi) => {
     const [bx, by] = pos[bi];
     o.fillStyle = '#2A2118';

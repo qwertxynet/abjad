@@ -16,13 +16,23 @@ const BRUSH = 6; // brush radius in skeleton-grid cells (12 canvas pixels)
 export const DRAFT_KEY = 'abjad-strokes-draft';
 
 export const TRACE_TIPS = {
-  'ط': 'First the downstroke, from the top. Then start at its foot and draw the oval: up and over to the right, round the end, and back along the line.',
-  'ظ': 'First the downstroke, from the top. Then the oval from its foot: up and over, round the end, back along the line. The dot comes last.',
-  'ص': 'Draw the loop first: from its left, up and over to the right and back along the line. Then lift the pen and draw the small tooth from its top, down into the bowl.',
-  'ض': 'Draw the loop first, from its left, round to the right and back; then the tooth from its top, down into the bowl; then the dot.',
-  'ك': 'Draw the top stroke first, down to the left. Then the body, and the small mark last.',
-  'ف': 'Begin above the line at the right of the loop: up, round to the left, down the short neck, then along the line.',
-  'ق': 'Begin at the right of the loop: up, round to the left, down the short neck, then the deep tail below the line.',
+  'ط': "Start at the top of the curve: go down round the end, back along the line, then up and over to close the loop. Lift the pen and draw the downstroke from the top.",
+  'ظ': "The loop first, from the top of the curve: down round the end, back along the line, up and over. Then the downstroke from the top, then the dot.",
+  'ف': "The head first, from the top: to the left, round and back up. Lift the pen, then the base from right to left.",
+  'ق': "The head first, from the top: to the left, round and back up. Lift the pen, then the deep tail from right to left.",
+  'ج': "The top bar first, from left to right. Lift the pen, then the bowl from the top down and round.",
+  'ح': "The top bar first, from left to right. Lift the pen, then the bowl from the top down and round.",
+  'خ': "The top bar first, from left to right. Lift the pen, then the bowl; the dot comes last.",
+  'د': "The slant first, from the top down. Lift the pen, then the base from right to left.",
+  'ذ': "The slant first, from the top down. Lift the pen, then the base from right to left; the dot comes last.",
+  'ل': "The stem first, from the top down. Lift the pen, then the bowl from right to left.",
+  'م': "The head first, then lift the pen and draw the tail down.",
+  'و': "Start at the top-left of the head: right over the top, down, round the bottom back to the left, then down into the tail.",
+  'ع': "The head first, then lift the pen and draw the bowl.",
+  'غ': "The head first, then the bowl; the dot comes last.",
+  'ص': "Draw the loop first: from its left, up and over to the right and back along the line. Then lift the pen and draw the small tooth from its top, down into the bowl.",
+  'ض': "Draw the loop first, from its left, round to the right and back; then the tooth from its top, down into the bowl; then the dot.",
+  'ك': "The stem first, from the top down. Then the base, and the small mark last.",
 };
 
 /** The stroke definition for a letter form: the teacher's draft (if any, on this device) or the published one. */
@@ -62,7 +72,7 @@ export async function prepare(canvas, glyph, base, form, def) {
 export function markerFor(info, s, avoid = []) {
   if (s.kind === 'dot') return { badge: badgeSpot(info, s.at, 13, avoid) };
   const arrow = besideArrow(info, s.pts); // pieces
-  return { arrow, badge: badgeSpot(info, arrow[0][0], 13, avoid) };
+  return { arrow, badge: badgeSpot(info, s.pts[0], 13, avoid) }; // the number sits by where the stroke really starts
 }
 
 export default function Trace({ glyph, base, form = 'isolated', onDone, done, def = null, autoWatch = true }) {
