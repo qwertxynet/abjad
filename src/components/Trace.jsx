@@ -1,153 +1,139 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import STROKES from '../data/strokes.json';
+import { SIZE, BASE, GRID, CELL, drawGlyph, analyseGlyph, buildStrokes, besideArrow, badgeSpot, ownership } from './strokes.js';
 
-// Tracing pad: the letter is drawn faintly with the course font, then split into its connected parts
-// (the main body and each dot or mark). Each part gets a numbered start marker with an arrow, in writing order:
-// the body first, then the dots and marks from right to left. Coverage is checked against the glyph's ink.
+// Tracing pad.
+//  1. Watch: a pen writes the letter stroke by stroke, in order, then taps in each dot.
+//  2. Trace: only the current stroke is marked, with a numbered start dot and a curved arrow running beside the
+//     letter (never on it). When most of that stroke is covered it turns green and the next one appears.
+// Stroke order comes from src/data/strokes.json (drawn per letter form; see strokes.js), or from the teacher's
+// draft in the Strokes editor.
 
-const SIZE = 320; // canvas pixels (CSS scales it)
-const GRID = 80; // analysis grid
-const PASS = 0.72; // share of the ink the student must cover
-export const BASE = 0.62; // the writing line, as a share of the height (matches the CSS rule)
+export { BASE };
+const STROKE_DONE = 0.7; // share of a stroke's ink to cover before moving on
+const PASS = 0.72; // share of the whole letter
+const BRUSH = 6; // brush radius in skeleton-grid cells (12 canvas pixels)
+export const DRAFT_KEY = 'abjad-strokes-draft';
 
-// Where the main stroke starts and which way it goes (degrees: 0 = right, 90 = down, 180 = left).
-// Keyed by base letter; position-specific overrides use "char:form".
-const START = {
-  'ا': ['top', 90], 'د': ['top', 60], 'ذ': ['top', 60], 'ر': ['top', 110], 'ز': ['top', 110], 'و': ['tr', 180],
-  'ب': ['tr', 100], 'ت': ['tr', 100], 'ث': ['tr', 100], 'ن': ['tr', 100], 'ي': ['tr', 180],
-  'ج': ['tl', 0], 'ح': ['tl', 0], 'خ': ['tl', 0], 'س': ['tr', 90], 'ش': ['tr', 90], 'ص': ['tl', 330], 'ض': ['tl', 330],
-  'ط': ['tl', 330], 'ظ': ['tl', 330], 'ع': ['tr', 180], 'غ': ['tr', 180], 'ف': ['tr', 180], 'ق': ['tr', 180],
-  'ك': ['top', 100], 'ل': ['top', 90], 'م': ['tr', 180], 'ه': ['tr', 180], 'ة': ['tr', 180],
-};
 export const TRACE_TIPS = {
-  'ط': 'Draw the loop first, from the left, then lift the pen and add the tall stroke.',
-  'ظ': 'Draw the loop first, from the left, then the tall stroke, then the dot.',
-  'ك': 'Draw the tall body first, then the small mark inside.',
-  'ص': 'Start at the left of the loop and go round to the right, then down into the bowl.',
-  'ض': 'Start at the left of the loop and go round to the right, then down into the bowl, then the dot.',
+  'ط': 'First the downstroke, from the top. Then start at its foot and draw the oval: up and over to the right, round the end, and back along the line.',
+  'ظ': 'First the downstroke, from the top. Then the oval from its foot: up and over, round the end, back along the line. The dot comes last.',
+  'ص': 'Draw the loop first: from its left, up and over to the right and back along the line. Then lift the pen and draw the small tooth from its top, down into the bowl.',
+  'ض': 'Draw the loop first, from its left, round to the right and back; then the tooth from its top, down into the bowl; then the dot.',
+  'ك': 'Draw the top stroke first, down to the left. Then the body, and the small mark last.',
+  'ف': 'Begin above the line at the right of the loop: up, round to the left, down the short neck, then along the line.',
+  'ق': 'Begin at the right of the loop: up, round to the left, down the short neck, then the deep tail below the line.',
 };
 
-function analyse(ctx) {
-  const img = ctx.getImageData(0, 0, SIZE, SIZE).data;
-  const cell = SIZE / GRID;
-  const ink = new Uint8Array(GRID * GRID);
-  for (let gy = 0; gy < GRID; gy++)
-    for (let gx = 0; gx < GRID; gx++) {
-      let on = 0;
-      for (let y = 0; y < cell; y += 2)
-        for (let x = 0; x < cell; x += 2) {
-          const i = ((Math.floor(gy * cell + y) * SIZE) + Math.floor(gx * cell + x)) * 4;
-          if (img[i + 3] > 90) on++;
-        }
-      ink[gy * GRID + gx] = on > 0 ? 1 : 0;
-    }
-  // Connected parts (8-neighbour flood fill).
-  const lab = new Int32Array(GRID * GRID).fill(-1);
-  const parts = [];
-  for (let i = 0; i < ink.length; i++) {
-    if (!ink[i] || lab[i] >= 0) continue;
-    const id = parts.length;
-    const cells = [];
-    const st = [i];
-    lab[i] = id;
-    while (st.length) {
-      const c = st.pop();
-      cells.push(c);
-      const cx = c % GRID, cy = (c - cx) / GRID;
-      for (let dy = -1; dy <= 1; dy++)
-        for (let dx = -1; dx <= 1; dx++) {
-          const nx = cx + dx, ny = cy + dy;
-          if (nx < 0 || ny < 0 || nx >= GRID || ny >= GRID) continue;
-          const n = ny * GRID + nx;
-          if (ink[n] && lab[n] < 0) {
-            lab[n] = id;
-            st.push(n);
-          }
-        }
-    }
-    parts.push(cells);
+/** The stroke definition for a letter form: the teacher's draft (if any, on this device) or the published one. */
+export function strokeDef(base, form) {
+  const key = `${base}:${form}`;
+  try {
+    const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+    if (draft[key]) return draft[key];
+  } catch {
+    /* no draft */
   }
-  return { ink, parts };
+  return STROKES[key] || null;
 }
 
-function startOf(cells, rule) {
-  const pts = cells.map((c) => [c % GRID, Math.floor(c / GRID)]);
-  const minY = Math.min(...pts.map((p) => p[1]));
-  const maxY = Math.max(...pts.map((p) => p[1]));
-  const band = (f) => pts.filter((p) => p[1] <= minY + Math.max(2, (maxY - minY) * f));
-  let best;
-  if (rule === 'right') {
-    // End and middle forms start at the joining stroke on the right.
-    const maxX = Math.max(...pts.map((p) => p[0]));
-    best = pts.filter((p) => p[0] >= maxX - 1).sort((a, b) => b[1] - a[1])[0];
-  } else if (rule === 'top') best = band(0.05).sort((a, b) => b[0] - a[0])[0];
-  else if (rule === 'tl') best = band(0.2).sort((a, b) => a[0] - b[0])[0];
-  else best = band(0.25).sort((a, b) => b[0] - a[0])[0]; // tr
-  return best.map((v) => (v + 0.5) * (SIZE / GRID));
+const reduceMotion = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const pathD = (pts) => pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+const lengthOf = (pts) => pts.reduce((s, p, i) => (i ? s + Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]) : 0), 0);
+
+/** Prepares a letter form: guide image, skeleton, strokes, and which ink belongs to which stroke. */
+export async function prepare(canvas, glyph, base, form, def) {
+  try {
+    await document.fonts.load('200px "Noto Naskh Arabic"', glyph);
+  } catch {
+    /* use whatever font is there */
+  }
+  const g = canvas.getContext('2d', { willReadFrequently: true });
+  drawGlyph(g, glyph);
+  const info = analyseGlyph(g);
+  const joinedRight = glyph.startsWith('ـ');
+  const strokes = buildStrokes(info, def ?? strokeDef(base, form), joinedRight ? [SIZE * 0.8, SIZE * BASE] : [SIZE * 0.66, SIZE * 0.35]);
+  const own = ownership(info, strokes);
+  const totals = strokes.map((_, k) => own.reduce((s, o) => s + (o === k ? 1 : 0), 0));
+  return { g, info, strokes, own, totals };
 }
 
-export default function Trace({ glyph, base, onDone, done }) {
+/** The marker drawing for one stroke: arrow points beside the letter and a badge spot (canvas pixels). */
+export function markerFor(info, s, avoid = []) {
+  if (s.kind === 'dot') return { badge: badgeSpot(info, s.at, 13, avoid) };
+  const arrow = besideArrow(info, s.pts); // pieces
+  return { arrow, badge: badgeSpot(info, arrow[0][0], 13, avoid) };
+}
+
+export default function Trace({ glyph, base, form = 'isolated', onDone, done, def = null, autoWatch = true }) {
   const guide = useRef(null);
   const pad = useRef(null);
-  const info = useRef(null);
+  const data = useRef(null);
   const drawing = useRef(false);
   const last = useRef(null);
   const covered = useRef(new Set());
-  const [markers, setMarkers] = useState([]);
+  const anim = useRef(0);
+  const [ready, setReady] = useState(0);
+  const [phase, setPhase] = useState('watch');
+  const [demo, setDemo] = useState({ k: -1, t: 0 }); // stroke being drawn in Watch, and how far (0..1)
+  const [finished, setFinished] = useState([]); // strokes the student has completed
   const [score, setScore] = useState(0);
   const [passed, setPassed] = useState(false);
 
   useEffect(() => {
     let alive = true;
-    const run = async () => {
-      try {
-        await document.fonts.load('200px "Noto Naskh Arabic"', glyph);
-      } catch {
-        /* fall back to whatever font is available */
-      }
+    (async () => {
+      const d = await prepare(guide.current, glyph, base, form, def);
       if (!alive) return;
-      const g = guide.current.getContext('2d');
-      g.clearRect(0, 0, SIZE, SIZE);
-      g.font = `${glyph.length > 2 ? 160 : 200}px "Noto Naskh Arabic", serif`;
-      g.textAlign = 'center';
-      g.textBaseline = 'alphabetic';
-      g.direction = 'rtl';
-      g.fillStyle = '#000';
-      g.fillText(glyph, SIZE / 2, SIZE * BASE);
-      const a = analyse(g);
-      info.current = a;
-      // Repaint the guide in a soft colour.
+      data.current = d;
       const css = getComputedStyle(guide.current);
-      g.globalCompositeOperation = 'source-in';
-      g.fillStyle = css.getPropertyValue('--trace-guide').trim() || '#d9cfb8';
-      g.fillRect(0, 0, SIZE, SIZE);
-      g.globalCompositeOperation = 'source-over';
-      // Order the parts: biggest first (the body), then the rest from right to left, top to bottom.
-      const parts = [...a.parts].map((cells) => ({ cells, n: cells.length }));
-      parts.sort((p, q) => q.n - p.n);
-      const [body, ...rest] = parts;
-      const joinedRight = glyph.startsWith('ـ');
-      const rule = joinedRight ? ['right', 180] : START[base] || ['tr', 180];
-      const ms = [];
-      if (body) ms.push({ at: startOf(body.cells, rule[0]), angle: rule[1], dot: false });
-      rest
-        .filter((p) => p.n >= 2)
-        .map((p) => ({ p, c: startOf(p.cells, 'tr') }))
-        .sort((u, v) => v.c[0] - u.c[0] || u.c[1] - v.c[1])
-        .forEach(({ p, c }) => ms.push({ at: c, angle: null, dot: p.n < 30 }));
-      setMarkers(ms);
+      d.g.globalCompositeOperation = 'source-in';
+      d.g.fillStyle = css.getPropertyValue('--trace-guide').trim() || '#d9cfb8';
+      d.g.fillRect(0, 0, SIZE, SIZE);
+      d.g.globalCompositeOperation = 'source-over';
       clear();
-    };
-    run();
+      setReady((r) => r + 1);
+      if (autoWatch) watch();
+      else setPhase('trace');
+    })();
     return () => {
       alive = false;
+      cancelAnimationFrame(anim.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [glyph]);
+  }, [glyph, form, def]);
+
+  function watch() {
+    const d = data.current;
+    if (!d) return;
+    cancelAnimationFrame(anim.current);
+    setPhase('watch');
+    const still = reduceMotion();
+    const durs = d.strokes.map((s) => (s.kind === 'dot' ? 350 : Math.max(650, lengthOf(s.pts) * 5)));
+    const start = performance.now();
+    const step = (now) => {
+      let t = now - start;
+      let k = 0;
+      while (k < durs.length && t > durs[k] + 250) {
+        t -= durs[k] + 250;
+        k++;
+      }
+      if (k >= durs.length) {
+        setDemo({ k: durs.length, t: 1 });
+        anim.current = requestAnimationFrame(() => setTimeout(() => setPhase('trace'), 500));
+        return;
+      }
+      setDemo({ k, t: still ? 1 : Math.min(1, t / durs[k]) });
+      anim.current = requestAnimationFrame(step);
+    };
+    anim.current = requestAnimationFrame(step);
+  }
 
   function clear() {
-    const c = pad.current.getContext('2d');
-    c.clearRect(0, 0, SIZE, SIZE);
+    const c = pad.current?.getContext('2d');
+    c?.clearRect(0, 0, SIZE, SIZE);
     covered.current = new Set();
+    setFinished([]);
     setScore(0);
     setPassed(false);
   }
@@ -156,24 +142,24 @@ export default function Trace({ glyph, base, onDone, done }) {
     const r = pad.current.getBoundingClientRect();
     return [((e.clientX - r.left) / r.width) * SIZE, ((e.clientY - r.top) / r.height) * SIZE];
   };
-
   function mark([x, y]) {
-    const a = info.current;
-    if (!a) return;
-    const cell = SIZE / GRID;
-    const R = 3; // brush radius in grid cells
-    const gx = Math.floor(x / cell), gy = Math.floor(y / cell);
-    for (let dy = -R; dy <= R; dy++)
-      for (let dx = -R; dx <= R; dx++) {
+    const d = data.current;
+    if (!d) return;
+    const gx = Math.floor(x / CELL), gy = Math.floor(y / CELL);
+    for (let dy = -BRUSH; dy <= BRUSH; dy++)
+      for (let dx = -BRUSH; dx <= BRUSH; dx++) {
         const nx = gx + dx, ny = gy + dy;
-        if (nx < 0 || ny < 0 || nx >= GRID || ny >= GRID || dx * dx + dy * dy > R * R) continue;
+        if (nx < 0 || ny < 0 || nx >= GRID || ny >= GRID || dx * dx + dy * dy > BRUSH * BRUSH) continue;
         const i = ny * GRID + nx;
-        if (a.ink[i]) covered.current.add(i);
+        if (d.info.mask[i]) covered.current.add(i);
       }
   }
-
   function down(e) {
     e.preventDefault();
+    if (phase === 'watch') {
+      cancelAnimationFrame(anim.current);
+      setPhase('trace');
+    }
     pad.current.setPointerCapture(e.pointerId);
     drawing.current = true;
     last.current = pos(e);
@@ -183,8 +169,7 @@ export default function Trace({ glyph, base, onDone, done }) {
     if (!drawing.current) return;
     const p = pos(e);
     const c = pad.current.getContext('2d');
-    const css = getComputedStyle(pad.current);
-    c.strokeStyle = css.getPropertyValue('--trace-ink').trim() || '#22407a';
+    c.strokeStyle = getComputedStyle(pad.current).getPropertyValue('--trace-ink').trim() || '#22407a';
     c.lineWidth = 16;
     c.lineCap = 'round';
     c.lineJoin = 'round';
@@ -192,56 +177,71 @@ export default function Trace({ glyph, base, onDone, done }) {
     c.moveTo(...last.current);
     c.lineTo(...p);
     c.stroke();
-    // Mark along the segment.
     const steps = Math.ceil(Math.hypot(p[0] - last.current[0], p[1] - last.current[1]) / 3);
     for (let i = 1; i <= steps; i++) mark([last.current[0] + ((p[0] - last.current[0]) * i) / steps, last.current[1] + ((p[1] - last.current[1]) * i) / steps]);
     last.current = p;
+    check(false);
+  }
+  function check(final) {
+    const d = data.current;
+    if (!d) return;
+    const got = d.totals.map(() => 0);
+    for (const i of covered.current) if (d.own[i] >= 0) got[d.own[i]]++;
+    const fin = d.totals.map((t, k) => (t ? got[k] / t >= STROKE_DONE : true)).flatMap((ok, k) => (ok ? [k] : []));
+    if (fin.length !== finished.length) setFinished(fin);
+    if (final) {
+      // only the letter's own ink counts (not the joining line from the letter before)
+      const total = d.totals.reduce((s, v) => s + v, 0) || 1;
+      const sc = got.reduce((s, v) => s + v, 0) / total;
+      setScore(sc);
+      if (sc >= PASS && fin.length === d.strokes.length && !passed) {
+        setPassed(true);
+        onDone?.();
+      }
+    }
   }
   function up() {
     if (!drawing.current) return;
     drawing.current = false;
-    const a = info.current;
-    if (!a) return;
-    const total = a.ink.reduce((s, v) => s + v, 0) || 1;
-    const sc = covered.current.size / total;
-    setScore(sc);
-    if (sc >= PASS && !passed) {
-      setPassed(true);
-      onDone?.();
-    }
+    check(true);
   }
+
+  // What to draw on the marker layer.
+  const d = data.current;
+  const view = useMemo(() => {
+    if (!d) return null;
+    const cur = d.strokes.findIndex((_, k) => !finished.includes(k));
+    const m = cur >= 0 ? markerFor(d.info, d.strokes[cur]) : null;
+    return { cur, m };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, finished]);
 
   return (
     <div className="trace">
       <div className="trace-box">
         <canvas ref={guide} width={SIZE} height={SIZE} className="trace-guide" aria-hidden="true" />
         <svg className="trace-marks" viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true">
-          {markers.map((m, i) => {
-            const [sx, sy] = m.at;
-            const rad = ((m.angle ?? 0) * Math.PI) / 180;
-            // The badge sits beside the start point (behind the arrow, or up and right of a dot) so it never hides the ink.
-            const [x, y] = m.angle === null ? [sx + 20, sy - 16] : [sx - Math.cos(rad) * 16, sy - Math.sin(rad) * 16];
-            return (
-              <g key={i}>
-                {m.angle !== null && (
-                  <path
-                    d={`M${sx + Math.cos(rad) * 6} ${sy + Math.sin(rad) * 6} l${Math.cos(rad) * 40} ${Math.sin(rad) * 40}`}
-                    className="trace-arrow"
-                    markerEnd="url(#ah)"
-                  />
-                )}
-                <circle cx={x} cy={y} r="13" className="trace-num" />
-                <text x={x} y={y + 5} textAnchor="middle" className="trace-num-t">
-                  {i + 1}
-                </text>
-              </g>
-            );
-          })}
           <defs>
-            <marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto">
               <path d="M0 0 L10 5 L0 10 z" className="trace-arrowhead" />
             </marker>
           </defs>
+          {d &&
+            d.strokes.map((s, k) =>
+              finished.includes(k) && phase === 'trace' ? (
+                s.kind === 'dot' ? <circle key={k} cx={s.at[0]} cy={s.at[1]} r="11" className="trace-done" /> : <path key={k} d={pathD(s.pts)} className="trace-done" />
+              ) : null,
+            )}
+          {d && phase === 'watch' && d.strokes.map((s, k) => <Demo key={k} s={s} t={k < demo.k ? 1 : k === demo.k ? demo.t : 0} n={k + 1} info={d.info} />)}
+          {d && phase === 'trace' && view?.m && (
+            <g className="trace-current">
+              {view.m.arrow?.map((q, j) => <path key={j} d={pathD(q)} className="trace-arrow" markerEnd="url(#ah)" />)}
+              <circle cx={view.m.badge[0]} cy={view.m.badge[1]} r="13" className="trace-num" />
+              <text x={view.m.badge[0]} y={view.m.badge[1] + 5} textAnchor="middle" className="trace-num-t">
+                {view.cur + 1}
+              </text>
+            </g>
+          )}
         </svg>
         <canvas
           ref={pad}
@@ -257,6 +257,9 @@ export default function Trace({ glyph, base, onDone, done }) {
         {(passed || done) && <div className="trace-star" aria-label="Well done">★</div>}
       </div>
       <div className="trace-bar">
+        <button className="btn ghost" onClick={() => { clear(); watch(); }} title="Watch the letter being written">
+          ▶ Watch
+        </button>
         <div className="meter" aria-label="How much of the letter you have covered">
           <span style={{ width: `${Math.min(100, (score / PASS) * 100)}%` }} />
         </div>
@@ -264,6 +267,95 @@ export default function Trace({ glyph, base, onDone, done }) {
           Clear
         </button>
       </div>
+      {d && (
+        <p className="trace-step-note" aria-live="polite">
+          {phase === 'watch' ? 'Watch the pen, then trace.' : view?.cur >= 0 ? `Stroke ${view.cur + 1} of ${d.strokes.length}${d.strokes[view.cur].kind === 'dot' ? ' · a dot' : ''}` : 'All strokes done.'}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** One stroke of the Watch animation: the ink appearing along the path, with the pen at its tip. */
+export function Demo({ s, t, n }) {
+  if (t <= 0) return null;
+  if (s.kind === 'dot')
+    return (
+      <g>
+        <circle cx={s.at[0]} cy={s.at[1]} r={11 * Math.min(1, t * 1.6)} className="trace-demo-dot" />
+      </g>
+    );
+  const L = lengthOf(s.pts);
+  // the part of the path drawn so far
+  let acc = 0;
+  const shown = [s.pts[0]];
+  for (let i = 1; i < s.pts.length; i++) {
+    const seg = Math.hypot(s.pts[i][0] - s.pts[i - 1][0], s.pts[i][1] - s.pts[i - 1][1]);
+    if (acc + seg <= L * t) {
+      shown.push(s.pts[i]);
+      acc += seg;
+    } else {
+      const f = (L * t - acc) / (seg || 1);
+      shown.push([s.pts[i - 1][0] + (s.pts[i][0] - s.pts[i - 1][0]) * f, s.pts[i - 1][1] + (s.pts[i][1] - s.pts[i - 1][1]) * f]);
+      break;
+    }
+  }
+  const tip = shown[shown.length - 1];
+  return (
+    <g>
+      <path d={pathD(shown)} className="trace-demo" />
+      {t < 1 && <circle cx={tip[0]} cy={tip[1]} r="7" className="trace-pen" />}
+      {t >= 1 && n && <text x={s.pts[0][0]} y={s.pts[0][1] + 4} textAnchor="middle" className="trace-demo-n">{n}</text>}
+    </g>
+  );
+}
+
+/** Every stroke of a letter form at once, numbered, with its arrow beside the letter: for review sheets and the editor. */
+export function Overview({ glyph, base, form = 'isolated', def = null, onPick, selected = -1 }) {
+  const guide = useRef(null);
+  const [view, setView] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const d = await prepare(guide.current, glyph, base, form, def);
+      if (!alive) return;
+      const css = getComputedStyle(guide.current);
+      d.g.globalCompositeOperation = 'source-in';
+      d.g.fillStyle = css.getPropertyValue('--trace-guide').trim() || '#d9cfb8';
+      d.g.fillRect(0, 0, SIZE, SIZE);
+      d.g.globalCompositeOperation = 'source-over';
+      const badges = [];
+      const marks = d.strokes.map((s) => {
+        const m = markerFor(d.info, s, badges);
+        badges.push(m.badge);
+        return m;
+      });
+      setView({ strokes: d.strokes, marks });
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [glyph, base, form, def]);
+  return (
+    <div className="trace-box overview">
+      <canvas ref={guide} width={SIZE} height={SIZE} className="trace-guide" aria-hidden="true" />
+      <svg className="trace-marks" viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={`Stroke order for ${glyph}`}>
+        <defs>
+          <marker id="ah2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto">
+            <path d="M0 0 L10 5 L0 10 z" className="trace-arrowhead" />
+          </marker>
+        </defs>
+        {view?.strokes.map((s, k) => (
+          <g key={k} className={'ov-stroke' + (k === selected ? ' sel' : '')} onClick={onPick ? () => onPick(k) : undefined}>
+            {s.kind === 'line' && <path d={pathD(s.pts)} className="ov-path" />}
+            {view.marks[k].arrow?.map((q, j) => <path key={j} d={pathD(q)} className="trace-arrow" markerEnd="url(#ah2)" />)}
+            <circle cx={view.marks[k].badge[0]} cy={view.marks[k].badge[1]} r="13" className="trace-num" />
+            <text x={view.marks[k].badge[0]} y={view.marks[k].badge[1] + 5} textAnchor="middle" className="trace-num-t">
+              {k + 1}
+            </text>
+          </g>
+        ))}
+      </svg>
     </div>
   );
 }

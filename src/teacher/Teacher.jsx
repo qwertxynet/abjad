@@ -8,6 +8,7 @@ import { findSegments, expectedSyllables, isSyllableClip } from './segments.js';
 import { drawQuiz, QUIZ_VERSION } from '../quiz.js';
 import { weekByN } from '../data/weeks.js';
 import QuizReview from '../components/QuizReview.jsx';
+import StrokesTab from './StrokesTab.jsx';
 
 export default function Teacher({ tab }) {
   const [ok, setOk] = useState(false);
@@ -36,6 +37,7 @@ export default function Teacher({ tab }) {
     ['check', 'Check a code'],
     ['unlock', 'Unlock code'],
     ['studio', 'Recording studio'],
+    ['strokes', 'Strokes'],
   ];
   const cur = T.find((t) => t[0] === tab) ? tab : 'check';
   return (
@@ -51,6 +53,7 @@ export default function Teacher({ tab }) {
       {cur === 'check' && <Check />}
       {cur === 'unlock' && <Unlock />}
       {cur === 'studio' && <Studio />}
+      {cur === 'strokes' && <StrokesTab />}
     </div>
   );
 }

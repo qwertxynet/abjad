@@ -291,48 +291,80 @@ function SignCard({ id }) {
   );
 }
 
+const FORM_LABEL = { isolated: 'Alone', initial: 'Start', medial: 'Middle', final: 'End' };
+const formsFor = (ch) => (byChar[ch]?.joins ? ['isolated', 'initial', 'medial', 'final'] : byChar[ch] ? ['isolated', 'final'] : ['isolated']);
+const TRACED_KEY = 'abjad-traced'; // which letter forms this device has traced, so progress survives a reload
+const readTraced = () => {
+  try {
+    return JSON.parse(localStorage.getItem(TRACED_KEY) || '{}');
+  } catch {
+    return {};
+  }
+};
+
 function TraceStep({ wk, onDone }) {
   const letters = wk.newLetters.length ? wk.newLetters : ['ء', 'أ', 'ى', 'آ'];
-  const [i, setI] = useState(0);
-  const [form, setForm] = useState('isolated');
-  const [got, setGot] = useState({});
-  const c = letters[i];
+  const keyOf = (ch, fm) => ch + ':' + fm;
+  // every form of every new letter, in order: the step is done when all are traced
+  const order = letters.flatMap((ch) => formsFor(ch).map((fm) => [ch, fm]));
+  const [got, setGot] = useState(readTraced);
+  const firstOpen = order.findIndex(([ch, fm]) => !got[keyOf(ch, fm)]);
+  const [at, setAt] = useState(firstOpen < 0 ? 0 : firstOpen);
+  const [c, form] = order[at];
   const f = forms(c) || { isolated: c, initial: c, medial: c, final: c };
   const glyph = f[form];
-  const keyOf = (ch, fm) => ch + ':' + fm;
-  const all = letters.every((ch) => got[keyOf(ch, 'isolated')]);
-  const FORMS = byChar[c]?.joins ? ['isolated', 'initial', 'medial', 'final'] : byChar[c] ? ['isolated', 'final'] : ['isolated'];
+  const doneN = order.filter(([ch, fm]) => got[keyOf(ch, fm)]).length;
+  const all = doneN === order.length;
+  const mark = () =>
+    setGot((g) => {
+      const n = { ...g, [keyOf(c, form)]: true };
+      try {
+        localStorage.setItem(TRACED_KEY, JSON.stringify(n));
+      } catch {
+        /* storage unavailable */
+      }
+      return n;
+    });
+  const go = (k) => setAt(Math.max(0, Math.min(order.length - 1, k)));
+  const nextOpen = () => {
+    const k = order.findIndex(([ch, fm], j) => j > at && !got[keyOf(ch, fm)]);
+    go(k >= 0 ? k : at + 1);
+  };
   return (
     <>
       <p className="lead">
-        Trace each new letter with your finger or mouse. Start at <b>1</b> and follow the arrow, then add the dots and marks in order. Fill the
-        bar to earn a star. Each letter is required on its own; the other forms are extra practice.
+        Watch each letter being written, then trace it with your finger or mouse: start at <b>1</b>, follow the arrow, then the next stroke, dots
+        last. Trace every form of each new letter (alone, and at the start, middle and end of a word) to finish this step.
       </p>
       <div className="tabs">
-        {letters.map((ch, k) => (
-          <button key={ch} className={'tab' + (k === i ? ' on' : '') + (got[keyOf(ch, 'isolated')] ? ' seen' : '')} onClick={() => { setI(k); setForm('isolated'); }}>
+        {letters.map((ch) => (
+          <button
+            key={ch}
+            className={'tab' + (ch === c ? ' on' : '') + (formsFor(ch).every((fm) => got[keyOf(ch, fm)]) ? ' seen' : '')}
+            onClick={() => go(order.findIndex(([x]) => x === ch))}
+          >
             <span lang="ar">{ch}</span>
           </button>
         ))}
       </div>
       <div className="form-pick">
-        {FORMS.map((fm) => (
-          <button key={fm} className={'chip' + (fm === form ? ' on' : '')} onClick={() => setForm(fm)}>
-            {{ isolated: 'Alone', initial: 'Start', medial: 'Middle', final: 'End' }[fm]} <span lang="ar">{f[fm]}</span>
+        {formsFor(c).map((fm) => (
+          <button key={fm} className={'chip' + (fm === form ? ' on' : '')} onClick={() => go(order.findIndex(([x, y]) => x === c && y === fm))}>
+            {FORM_LABEL[fm]} <span lang="ar">{f[fm]}</span>
             {got[keyOf(c, fm)] ? ' ★' : ''}
           </button>
         ))}
       </div>
       {TRACE_TIPS[c] && <p className="hint">{TRACE_TIPS[c]}</p>}
-      <Trace key={glyph} glyph={glyph} base={c} done={!!got[keyOf(c, form)]} onDone={() => setGot((g) => ({ ...g, [keyOf(c, form)]: true }))} />
+      <Trace key={glyph + form} glyph={glyph} base={c} form={form} done={!!got[keyOf(c, form)]} onDone={mark} />
       <div className="next-row">
-        {i < letters.length - 1 && (
-          <button className="btn ghost" onClick={() => { setI(i + 1); setForm('isolated'); }}>
-            Next letter ›
+        {at < order.length - 1 && (
+          <button className={'btn' + (got[keyOf(c, form)] ? '' : ' ghost')} onClick={nextOpen}>
+            Next form ›
           </button>
         )}
         <button className="btn" onClick={onDone} disabled={!all}>
-          {all ? 'Next step ›' : `Trace every letter alone (${letters.filter((ch) => got[keyOf(ch, 'isolated')]).length}/${letters.length})`}
+          {all ? 'Next step ›' : `Trace every form (${doneN}/${order.length})`}
         </button>
       </div>
     </>
