@@ -657,3 +657,8 @@ h1, h2 { font-weight: 640; letter-spacing: -0.01em; }
 .se-btns button:disabled { opacity: 0.35; cursor: default; }
 .se-watch { grid-column: 1 / -1; max-width: 380px; }
 @media (max-width: 640px) { .stroke-editor { grid-template-columns: 1fr; } }
+
+.se-svg.recording { cursor: crosshair; }
+.se-ink { stroke: var(--trace-ink); stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: 0.75; }
+.se-rec { border: 2px solid var(--red); border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; }
+.btn.rec-btn { background: var(--red); border-color: var(--red); color: #fff; }
